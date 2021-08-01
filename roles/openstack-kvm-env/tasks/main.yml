@@ -1,0 +1,11 @@
+---
+- name: Register cloud image stat
+  stat:
+    path: /var/kvm/iso/focal-server-cloudimg-amd64.img
+  register: cloud_image
+
+- name: Check cloud image was existed
+  ansible.builtin.debug:
+    msg: "cloud_image was not existed"
+  when: not cloud_image.stat.exists
+
