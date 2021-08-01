@@ -1,11 +1,21 @@
 ---
+
+- name: Define base image name
+  set_fact:
+    base_image_name: "{{ group_vars.cloud_image.get_url | basename }}"
+
 - name: Register cloud image stat
   stat:
-    path: /var/kvm/iso/focal-server-cloudimg-amd64.img
+    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ base_image_name }}"
   register: cloud_image
 
-- name: Check cloud image was existed
-  ansible.builtin.debug:
-    msg: "cloud_image was not existed"
+#- name: Debug
+#  ansible.builtin.debug:
+#    msg: "{{ base_image_name }}"
+
+- name: Download cloud image of ubuntu if it was not existed
+  get_url:
+    url: "{{ group_vars.cloud_image.get_url }}"
+    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ base_image_name }}"
   when: not cloud_image.stat.exists
 

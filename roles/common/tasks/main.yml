@@ -1,0 +1,12 @@
+---
+# Arch Linux requires cloud-localds for the command 
+# cloud-localds
+
+- name: Find a command cloud-localds
+  shell: command -v cloud-localds > /dev/null 2>&1
+  register: is_cloud_localds_existed
+
+- name: Is cloud-localds command was existed
+  fail: msg="cloud-localds command was not existed"
+  when: is_cloud_localds_existed.rc != 0
+
