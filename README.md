@@ -17,6 +17,5 @@ $ . ./venv/bin/activate
 If NO errors were reported then you can run Ansible without the option `--check`.
 
 ```
-(venv) $ ansible-playbook -i production -l <hostname or group name> site.yml
+(venv) $ ansible-playbook -l localhost -K site.yml
 ```
-
