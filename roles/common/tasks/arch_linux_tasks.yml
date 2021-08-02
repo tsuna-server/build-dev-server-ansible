@@ -1,0 +1,7 @@
+---
+- name: Install packages with pacman
+  community.general.pacman:
+    name:
+      - dmidecode
+      - cloud-utils
+    state: present
