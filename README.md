@@ -7,6 +7,13 @@ $ . ./venv/bin/activate
 (vnev) $ pip -r requirements.txt
 ```
 
+Install `ansible-galaxy` requirements.
+
+```
+(venv) $ ansible-galaxy install -r requirements.yml
+```
+
+
 `ansible-playbook` can run with checking mode by adding `--check` option like below.
 
 ```
@@ -17,7 +24,7 @@ $ . ./venv/bin/activate
 If NO errors were reported then you can run Ansible without the option `--check`.
 
 ```
-(venv) $ ansible-playbook -l localhost -K site.yml
+(venv) $ ansible-playbook -l localhost site.yml
 ```
 
 # Links
