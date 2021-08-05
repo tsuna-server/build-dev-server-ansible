@@ -26,10 +26,11 @@
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}"
   loop: "{{ group_vars.kvm.instances }}"
 
-- name: Create external snapshots
-  ansible.builtin.debug:
-    msg: "{{ item.name }}"
-  loop: "{{ group_vars.kvm.instances }}"
+# Check whether domain was already existed
+- include: domain.yml
+  with_items: "{{ group_vars.kvm.instances }}"
+  loop_control:
+    loop_var: instance
 
 #- name: Debug instances
 #  ansible.builtin.debug:
