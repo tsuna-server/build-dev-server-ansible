@@ -1,0 +1,16 @@
+---
+#- name: Deeeeeeeeeeeeeeeeeeeeeeeeeeeeebug
+#  ansible.builtin.debug:
+#    msg: "instance_name={{ instance.name }}"
+
+#- name: virt-install a domain
+#  ansible.builtin.command:
+#    argv:
+#      - /usr/bin/virt-install
+#      - --name
+#      - "{{  }}"
+#
+#
+#- name: Print create_and_run_domain.yml
+#  ansible.builtin.debug:
+#    msg: "instance.name={{ instance.name }}, instance.memory={{ instance.memory }}"
