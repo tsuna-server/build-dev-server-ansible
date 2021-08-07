@@ -19,5 +19,17 @@
 
 # Start domain if the domain was already defined but not running.
 # Domain was already existed and running if create_and_run_domain.yml was executed previously.
-##- include: run_domain.yml
-##  when: "{{ instance.name }} not in {{ running_domains }}"
+- name: Domain should be running
+  community.libvirt.virt:
+    name: "{{ instance.name }}"
+    state: running
+  when: "{{ instance.name }} not in {{ running_domains }}"
+
+- name: Add additional interfaces to the domain
+  ansible.builtin.command:
+    argv: ["virsh", "attach-interface", "--domain", "{{ instance.name }}", "--type", "network", "--model", "virtio", "--config", "--live"]
+
+#virsh attach-interface --domain vm1 --type network \
+#        --source openstackvms --model virtio \
+#        --mac 52:54:00:4b:73:5f --config --live
+

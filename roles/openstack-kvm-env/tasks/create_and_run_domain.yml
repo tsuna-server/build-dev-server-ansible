@@ -1,8 +1,4 @@
 ---
-- name: Deeeeeeeeeeeeeeeeeeeeeeeeeeeeebug
-  ansible.builtin.debug:
-    msg: "instance_name={{ instance.name }}"
-
 - name: Create a directory for a new domain
   ansible.builtin.file:
     path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
@@ -10,7 +6,34 @@
     mode: '0755'
 
 - name: Create cloud_init.cfg
-  
+  ansible.builtin.template:
+    src: "cloud_init.cfg.j2"
+    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/cloud_init.cfg"
+    owner: root
+    group: root
+    mode: '644'
+    backup: no
+
+- name: Create network config
+  ansible.builtin.template:
+    src: "network_config.cfg.j2"
+    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/network_config.cfg"
+    owner: root
+    group: root
+    mode: '644'
+    backup: no
+
+- name: Create seed image to insert cloud and network configs
+  ansible.builtin.command:
+    argv: ["cloud-localds", "-v", "--network-config", "network_config.cfg", "{{ instance.name }}-seed.img", "cloud_init.cfg"]
+  args:
+    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+
+- name: Create an external snapshot from base image
+  ansible.builtin.command:
+    argv: ["qemu-img", "create", "-f", "qcow2", "-b", "../{{ base_image_name }}", "{{ instance.name }}.img"]
+  args:
+    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
 - name: virt-install a domain
   ansible.builtin.command:
@@ -26,20 +49,30 @@
                "--os-type", "Linux",
                "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
                "--network", "bridge:{{ instance.name_of_host_bridge }}",
-               "--console pty,target_type=serial"
+               "--console", "pty,target_type=serial",
+               "--noautoconsole"
            ]
+  args:
+    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+
+- name: Domain should be started
+  community.libvirt.virt:
+    name: "{{ instance.name }}"
+    state: running
+
+
 
 #cloud-localds -v --network-config=network_config_static.cfg dev-private-router01-seed.img cloud_init.cfg
 
-virt-install --name dev-private-router01 \
-  --virt-type kvm --memory 2048 --vcpus 2 \
-  --boot hd,menu=on \
-  --disk path=dev-private-router01-seed.img,device=cdrom \
-  --disk path=private-router-01.img,device=disk \
-  --graphics vnc \
-  --os-type Linux --os-variant ubuntu20.04 \
-  --network bridge:br0 \
-  --console pty,target_type=serial
+#virt-install --name dev-private-router01 \
+#  --virt-type kvm --memory 2048 --vcpus 2 \
+#  --boot hd,menu=on \
+#  --disk path=dev-private-router01-seed.img,device=cdrom \
+#  --disk path=private-router-01.img,device=disk \
+#  --graphics vnc \
+#  --os-type Linux --os-variant ubuntu20.04 \
+#  --network bridge:br0 \
+#  --console pty,target_type=serial
 
 
 
