@@ -3,8 +3,10 @@ group_vars:
   cloud_image:
     get_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
     local_saved_dir: /var/kvm/distros/
+    os_variant: ubuntu20.04
   kvm:
     instances:
       - name: dev-private-router01
         memory: 2048
-
+        name_of_host_bridge: br0
+        ssh_public_key: ssh-ed25519 AAA...xxx foo@example.com
