@@ -4,7 +4,7 @@
 
 ```
 $ . ./venv/bin/activate
-(vnev) $ pip -r requirements.txt
+(vnev) $ pip install -r requirements.txt
 ```
 
 Install `ansible-galaxy` requirements.
