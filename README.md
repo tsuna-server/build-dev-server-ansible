@@ -33,7 +33,9 @@ You have to copy SSH private key (in this example, that named `private-key`) tha
 
 ```
 $ git clone https://github.com/tsuna-server/build-dev-server-ansible.git
-$ cd build-dev-server-ansible
+$ cd build-dev-server-ansible/docker
+$ docker build -t tsutomu/build-dev-server-ansible
+$ cd ../
 $ cp /path/to/private-key ./private-key
 $ docker run --rm \
     --volume ${PWD}:/opt/ansible \
