@@ -1,16 +1,49 @@
 ---
-#- name: Deeeeeeeeeeeeeeeeeeeeeeeeeeeeebug
-#  ansible.builtin.debug:
-#    msg: "instance_name={{ instance.name }}"
+- name: Deeeeeeeeeeeeeeeeeeeeeeeeeeeeebug
+  ansible.builtin.debug:
+    msg: "instance_name={{ instance.name }}"
 
-#- name: virt-install a domain
-#  ansible.builtin.command:
-#    argv:
-#      - /usr/bin/virt-install
-#      - --name
-#      - "{{  }}"
-#
-#
+- name: Create a directory for a new domain
+  ansible.builtin.file:
+    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    state: directory
+    mode: '0755'
+
+- name: Create cloud_init.cfg
+  
+
+- name: virt-install a domain
+  ansible.builtin.command:
+    argv: ["/usr/bin/virt-install",
+               "--name", "{{ instance.name }}",
+               "--virt-type", "kvm",
+               "--memory", "{{ instance.memory }}",
+               "--vcpus", "2",
+               "--boot", "hd,menu=on",
+               "--disk", "path={{ instance.name }}-seed.img,device=cdrom",
+               "--disk", "path={{ instance.name }}.img,device=disk",
+               "--graphics", "vnc",
+               "--os-type", "Linux",
+               "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
+               "--network", "bridge:{{ instance.name_of_host_bridge }}",
+               "--console pty,target_type=serial"
+           ]
+
+#cloud-localds -v --network-config=network_config_static.cfg dev-private-router01-seed.img cloud_init.cfg
+
+virt-install --name dev-private-router01 \
+  --virt-type kvm --memory 2048 --vcpus 2 \
+  --boot hd,menu=on \
+  --disk path=dev-private-router01-seed.img,device=cdrom \
+  --disk path=private-router-01.img,device=disk \
+  --graphics vnc \
+  --os-type Linux --os-variant ubuntu20.04 \
+  --network bridge:br0 \
+  --console pty,target_type=serial
+
+
+
+
 #- name: Print create_and_run_domain.yml
 #  ansible.builtin.debug:
 #    msg: "instance.name={{ instance.name }}, instance.memory={{ instance.memory }}"

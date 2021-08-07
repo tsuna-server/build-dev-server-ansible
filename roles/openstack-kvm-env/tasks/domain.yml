@@ -13,11 +13,11 @@
   register: running_domains
 
 # Create domain and run it if the domain was not defined
+# The variable `instance` that passed from a parent tasks will be passed in create_and_run_domain.yml
 - include: create_and_run_domain.yml
-  when: "{{ instance.name }} in {{ defined_domains }}"
+  when: "instance.name not in defined_domains"
 
 # Start domain if the domain was already defined but not running.
 # Domain was already existed and running if create_and_run_domain.yml was executed previously.
-- include: run_domain.yml
-  when: "{{ instance.name }} not in {{ running_domains }}"
-
+##- include: run_domain.yml
+##  when: "{{ instance.name }} not in {{ running_domains }}"
