@@ -1,2 +1,3 @@
 ---
 - import_playbook: localhost.yml
+- import_playbook: dev-server.yml

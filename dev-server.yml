@@ -1,0 +1,7 @@
+---
+- hosts: dev-servers
+  become: yes
+  roles:
+    - common
+    - openstack-kvm-env
+
