@@ -12,13 +12,12 @@
                "--graphics", "vnc",
                "--os-type", "Linux",
                "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
-               "--network", "bridge:{{ instance.host_provider_bridge }}",
+               "--network", "bridge:{{ instance.network.provider.host_bridge }}",
                "--console", "pty,target_type=serial",
                "--noautoconsole"
            ]
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
-# Add interfaces
-
+# TODO: Add interfaces
 

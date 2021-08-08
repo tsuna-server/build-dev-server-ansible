@@ -14,13 +14,6 @@
     dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ base_image_name }}"
   when: not cloud_image.stat.exists
 
-- name: Create external snapshots for new instance
-  ansible.builtin.command:
-    argv: ["qemu-img", "create", "-f", "qcow2", "-b", "{{ base_image_name }}", "{{ item.name }}.img"]
-  args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}"
-  loop: "{{ group_vars.kvm.instances }}"
-
 # Check whether domain was already existed
 - include: domain.yml
   with_items: "{{ group_vars.kvm.instances }}"

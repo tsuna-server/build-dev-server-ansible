@@ -3,15 +3,20 @@
   set_fact:
     domain_uuid: "{{ 1000 | random | to_uuid }}"
 
+- name: Declare resource directory
+  set_fact:
+    portion_resource_directory: "{{ instance.name if instance.name.startswith('dev-private-router') else 'common' }}"
+
 - name: Create a directory for a new domain
   ansible.builtin.file:
     path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
     state: directory
     mode: '0755'
 
+# Same cloud_init.cfg.j2 is used between all nodes
 - name: Create cloud_init.cfg
   ansible.builtin.template:
-    src: "cloud_init.cfg.j2"
+    src: "common/cloud_init.cfg.j2"
     dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/cloud_init.cfg"
     owner: root
     group: root
@@ -20,12 +25,8 @@
 
 - name: Create network config
   ansible.builtin.template:
-    src: "network_config.cfg.j2"
+    src: "{{ portion_resource_directory }}/network_config.cfg.j2"
     dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/network_config.cfg"
-    owner: root
-    group: root
-    mode: '644'
-    backup: no
 
 - name: Create seed image to insert cloud and network configs
   ansible.builtin.command:
@@ -66,14 +67,5 @@
 - name: Define a new domain from an XML for router
   community.libvirt.virt:
     command: define
-    xml: "{{ lookup('template', instance.name+'/domain_template.xml.j2') }}"
-  register: define_router_domain
-  when: "instance.name.startswith('dev-private-router')"
-
-# Conditional else
-- name: Define a new domain from an XML for other instances
-  community.libvirt.virt:
-    command: define
-    xml: "{{ lookup('template', 'common/domain_template.xml.j2') }}"
-  when: define_router_domain is skipped
+    xml: "{{ lookup('template', portion_resource_directory+'/domain_template.xml.j2') }}"
 
