@@ -2,11 +2,32 @@
 group_vars:
   cloud_image:
     get_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
-    local_saved_dir: /var/kvm/distros/
+    local_saved_dir: /var/kvm/distros
     os_variant: ubuntu20.04
   kvm:
     instances:
       - name: dev-private-router01
-        memory: 2048
-        name_of_host_bridge: br0
-        ssh_public_key: ssh-ed25519 AAA...xxx foo@example.com
+        memory_in_kib: 2097152
+        ssh_public_key: ssh-xxxxx yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy foo_bar
+        network:
+          provider:
+            host_bridge: br0
+          management: null
+            host_bridge: br100
+
+      - name: dev-compute01
+        memory_in_kib: 2097152
+        vcpu: 2
+        ssh_public_key: ssh-xxxxx yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy foo_bar
+        network:
+          provider:
+            host_bridge: br0
+            interfaces:
+              - name: enp1s0
+                mac: "52:54:00:00:00:10"
+          management:
+            host_bridge: br100
+            interfaces:
+              - name: enp2s0
+                mac: "52:54:00:00:00:11"
+
