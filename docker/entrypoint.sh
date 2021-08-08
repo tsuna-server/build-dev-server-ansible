@@ -78,8 +78,6 @@ Host target-host
     IdentityFile ~/.ssh/private-key
 EOF
 
-    cp ./private-key ~/.ssh/private-key
-
     chmod 700 ~/.ssh
     chmod -R 600 ~/.ssh/*
 }
