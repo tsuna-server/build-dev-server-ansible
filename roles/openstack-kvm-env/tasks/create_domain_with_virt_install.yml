@@ -1,0 +1,24 @@
+---
+- name: virt-install a domain
+  ansible.builtin.command:
+    argv: ["virt-install",
+               "--name", "{{ instance.name }}",
+               "--virt-type", "kvm",
+               "--memory", "{{ instance.memory }}",
+               "--vcpus", "2",
+               "--boot", "hd,menu=on",
+               "--disk", "path={{ instance.name }}-seed.img,device=cdrom",
+               "--disk", "path={{ instance.name }}.img,device=disk",
+               "--graphics", "vnc",
+               "--os-type", "Linux",
+               "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
+               "--network", "bridge:{{ instance.host_provider_bridge }}",
+               "--console", "pty,target_type=serial",
+               "--noautoconsole"
+           ]
+  args:
+    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+
+# Add interfaces
+
+

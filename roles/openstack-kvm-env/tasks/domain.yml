@@ -14,6 +14,7 @@
 
 # Create domain and run it if the domain was not defined
 # The variable `instance` that passed from a parent tasks will be passed in create_and_run_domain.yml
+
 - include: create_and_run_domain.yml
   when: "instance.name not in defined_domains"
 
@@ -23,11 +24,11 @@
   community.libvirt.virt:
     name: "{{ instance.name }}"
     state: running
-  when: "{{ instance.name }} not in {{ running_domains }}"
+  when: "instance.name not in running_domains"
 
-- name: Add additional interfaces to the domain
-  ansible.builtin.command:
-    argv: ["virsh", "attach-interface", "--domain", "{{ instance.name }}", "--type", "network", "--model", "virtio", "--config", "--live"]
+#- name: Add additional interfaces to the domain
+#  ansible.builtin.command:
+#    argv: ["virsh", "attach-interface", "--domain", "{{ instance.name }}", "--type", "network", "--model", "virtio", "--config", "--live"]
 
 #virsh attach-interface --domain vm1 --type network \
 #        --source openstackvms --model virtio \

@@ -1,4 +1,8 @@
 ---
+- name: Create UUID for new domain
+  set_fact:
+    domain_uuid: "{{ 1000 | random | to_uuid }}"
+
 - name: Create a directory for a new domain
   ansible.builtin.file:
     path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
@@ -35,48 +39,41 @@
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
-- name: virt-install a domain
-  ansible.builtin.command:
-    argv: ["/usr/bin/virt-install",
-               "--name", "{{ instance.name }}",
-               "--virt-type", "kvm",
-               "--memory", "{{ instance.memory }}",
-               "--vcpus", "2",
-               "--boot", "hd,menu=on",
-               "--disk", "path={{ instance.name }}-seed.img,device=cdrom",
-               "--disk", "path={{ instance.name }}.img,device=disk",
-               "--graphics", "vnc",
-               "--os-type", "Linux",
-               "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
-               "--network", "bridge:{{ instance.name_of_host_bridge }}",
-               "--console", "pty,target_type=serial",
-               "--noautoconsole"
-           ]
-  args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+## Create a new domain with `virt-install` command
+## TODO: This is for creating domain XML file. It assumes run `virsh dumpxml <domain>`, edit it and save it as a new file after startup. Then we can use the XML file to define a domain.
+#- name: virt-install a domain
+#  ansible.builtin.command:
+#    argv: ["/usr/bin/virt-install",
+#               "--name", "{{ instance.name }}",
+#               "--virt-type", "kvm",
+#               "--memory", "{{ instance.memory }}",
+#               "--vcpus", "2",
+#               "--boot", "hd,menu=on",
+#               "--disk", "path={{ instance.name }}-seed.img,device=cdrom",
+#               "--disk", "path={{ instance.name }}.img,device=disk",
+#               "--graphics", "vnc",
+#               "--os-type", "Linux",
+#               "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
+#               "--network", "bridge:{{ instance.name_of_host_bridge }}",
+#               "--console", "pty,target_type=serial",
+#               "--noautoconsole"
+#           ]
+#  args:
+#    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
-- name: Domain should be started
+# Define a domain follow each conditionals #############################################
+
+- name: Define a new domain from an XML for router
   community.libvirt.virt:
-    name: "{{ instance.name }}"
-    state: running
+    command: define
+    xml: "{{ lookup('template', instance.name+'/domain_template.xml.j2') }}"
+  register: define_router_domain
+  when: "instance.name.startswith('dev-private-router')"
 
+# Conditional else
+- name: Define a new domain from an XML for other instances
+  community.libvirt.virt:
+    command: define
+    xml: "{{ lookup('template', 'common/domain_template.xml.j2') }}"
+  when: define_router_domain is skipped
 
-
-#cloud-localds -v --network-config=network_config_static.cfg dev-private-router01-seed.img cloud_init.cfg
-
-#virt-install --name dev-private-router01 \
-#  --virt-type kvm --memory 2048 --vcpus 2 \
-#  --boot hd,menu=on \
-#  --disk path=dev-private-router01-seed.img,device=cdrom \
-#  --disk path=private-router-01.img,device=disk \
-#  --graphics vnc \
-#  --os-type Linux --os-variant ubuntu20.04 \
-#  --network bridge:br0 \
-#  --console pty,target_type=serial
-
-
-
-
-#- name: Print create_and_run_domain.yml
-#  ansible.builtin.debug:
-#    msg: "instance.name={{ instance.name }}, instance.memory={{ instance.memory }}"
