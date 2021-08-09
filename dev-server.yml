@@ -3,5 +3,5 @@
   become: yes
   roles:
     - common
+    - vxlan
     - openstack-kvm-env
-
