@@ -1,0 +1,10 @@
+[Unit]
+Description = Custom VXLAN Setting Service
+
+[Service]
+ExecStart = /opt/vxlan-builder/set_vxlan_env.sh
+Type = oneshot
+Requires = network.target
+
+[Install]
+WantedBy = multi-user.target
