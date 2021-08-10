@@ -1,5 +1,17 @@
 ---
 group_vars:
+  vxlan:
+    provider:
+      interface: br0
+      nat:
+        ip: 192.168.1.254/24
+        src: 192.168.2.0/24
+      gateway: 192.168.1.1
+    management:
+      interface: br9
+      nat:
+        ip: 192.168.2.1/24
+        src: 192.168.1.0/24
   cloud_image:
     get_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
     local_saved_dir: /var/kvm/distros
@@ -8,17 +20,17 @@ group_vars:
     instances:
       - name: dev-private-router01
         memory_in_kib: 2097152
-        ssh_public_key: ssh-xxxxx yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy foo_bar
+        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx comment
         network:
           provider:
             host_bridge: br0
-          management: null
+          management:
             host_bridge: br100
 
       - name: dev-compute01
         memory_in_kib: 2097152
         vcpu: 2
-        ssh_public_key: ssh-xxxxx yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy foo_bar
+        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx comment
         network:
           provider:
             host_bridge: br0
