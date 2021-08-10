@@ -3,7 +3,9 @@
   ansible.builtin.git:
     repo: 'https://github.com/tsuna-server/vxlan-builder.git'
     dest: /opt/vxlan-builder
-    version: v1.0.0
+    version: v2.0.0
+    force: yes
+    depth: 1
 
 - name: Create configuration for vxlan-builder
   ansible.builtin.template:
@@ -11,11 +13,11 @@
     dest: /opt/vxlan-builder/vxlan.conf
     owner: root
     group: root
-    mod: '0644'
+    mode: '0644'
 
 - name: Create service file
   ansible.builtin.copy:
-    src: custom-vxlan.service.j2
+    src: custom-vxlan.service
     dest: /etc/systemd/system/custom-vxlan.service
     owner: root
     group: root
