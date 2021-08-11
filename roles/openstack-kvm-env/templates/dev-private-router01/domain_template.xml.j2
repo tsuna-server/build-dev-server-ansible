@@ -1,14 +1,14 @@
-<domain type='kvm' id='4'>
-  <name>dev-private-router01</name>
-  <uuid>77753241-9a4e-45ec-8870-e4836a9da11f</uuid>
+<domain type='kvm'>
+  <name>{{ instance.name }}</name>
+  <uuid>{{ domain_uuid }}</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
       <libosinfo:os id="http://ubuntu.com/ubuntu/20.04"/>
     </libosinfo:libosinfo>
   </metadata>
-  <memory unit='KiB'>2097152</memory>
-  <currentMemory unit='KiB'>2097152</currentMemory>
-  <vcpu placement='static'>2</vcpu>
+  <memory unit='MiB'>{{ instance.memory }}</memory>
+  <currentMemory unit='MiB'>{{ instance.memory }}</currentMemory>
+  <vcpu placement='static'>{{ instance.vcpu }}</vcpu>
   <resource>
     <partition>/machine</partition>
   </resource>

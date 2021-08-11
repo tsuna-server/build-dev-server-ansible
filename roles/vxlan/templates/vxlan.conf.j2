@@ -1,6 +1,6 @@
 HOST_BRIDGE_INTERFACE="{{group_vars.vxlan.provider.interface }}"
-VXLAN_GW_INNER_IP="{{ group_vars.vxlan.provider.nat.ip }}"
-VXLAN_GW_OUTER_IP="{{ group_vars.vxlan.management.nat.ip }}"
+VXLAN_GW_INNER_IP="{{ group_vars.vxlan.provider.ip }}"
+VXLAN_GW_OUTER_IP="{{ group_vars.vxlan.management.ip }}"
 VXLAN_NAT_SOURCE_IP_TO_OUTER_SEGMENT="{{ group_vars.vxlan.provider.nat.src }}"
 VXLAN_NAT_SOURCE_IP_TO_INNER_SEGMENT="{{ group_vars.vxlan.management.nat.src }}"
 PROVIDER_GW="{{ group_vars.vxlan.provider.gateway }}"

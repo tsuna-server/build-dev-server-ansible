@@ -14,9 +14,6 @@
     dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ base_image_name }}"
   when: not cloud_image.stat.exists
 
-# Check whether domain was already existed
-- include: domain.yml
-  with_items: "{{ group_vars.kvm.instances }}"
-  loop_control:
-    loop_var: instance
+- include_tasks: domain.yml
+  with_dict: "{{ group_vars.kvm.instances }}"
 

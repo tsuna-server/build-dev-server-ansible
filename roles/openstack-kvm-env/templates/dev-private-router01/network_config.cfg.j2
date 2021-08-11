@@ -1,9 +1,16 @@
+# This configuration will be modified entirely after second ansible will be running.
+# According to this reason, this configuration file is as simple as possible.
 version: 2
 ethernets:
   enp1s0:
-     dhcp4: false
-     addresses: [ 172.31.2.0/16 ]
-     gateway4: 172.31.0.1
-     nameservers:
-       addresses: [ 172.31.0.1, 8.8.8.8, 8.8.4.4 ]
+    dhcp4: false
+    dhcp6: false
+    addresses: [{{ instance.network.provider.ip }}]
+    gateway4: {{ instance.network.provider.gateway }}
+    nameservers:
+      addresses: [{% set g = namespace(comma = '') %}{% for item in instance.network.provider.dns.addresses %}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor %}]
        search: [ example.com ]
+  enp2s0:
+    dhcp4: false
+    dhcp6: false
+    addresses: [{{ instance.network.management.ip }}]

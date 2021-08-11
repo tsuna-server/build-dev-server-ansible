@@ -1,4 +1,17 @@
 ---
+# Declare variable in order to be convenience
+- name: Declare instance variable for domain.yml
+  set_fact:
+    instance: "{{ item.value }}"
+
+- name: Declare instance.name variable for domain.yml
+  set_fact:
+    instance: "{{ instance | combine( { 'name': item.key } ) }}"
+
+- name: Debug installing domain
+  ansible.builtin.debug:
+    msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ '(undefined)' if 'provider' not in instance.network }}, management.ip={{ '(undefined)' if 'management' not in instance.network }}]"
+
 # List defined domains
 - name: Get defined domains
   community.libvirt.virt:
@@ -22,12 +35,4 @@
     name: "{{ instance.name }}"
     state: running
   when: "instance.name not in running_domains.list_vms"
-
-#- name: Add additional interfaces to the domain
-#  ansible.builtin.command:
-#    argv: ["virsh", "attach-interface", "--domain", "{{ instance.name }}", "--type", "network", "--model", "virtio", "--config", "--live"]
-
-#virsh attach-interface --domain vm1 --type network \
-#        --source openstackvms --model virtio \
-#        --mac 52:54:00:4b:73:5f --config --live
 
