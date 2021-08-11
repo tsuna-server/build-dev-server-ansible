@@ -3,14 +3,14 @@ group_vars:
   vxlan:
     provider:
       interface: br0
+      ip: 192.168.1.254/24
       nat:
-        ip: 192.168.1.254/24
         src: 192.168.2.0/24
       gateway: 192.168.1.1
     management:
       interface: br9
+      ip: 192.168.2.1/24
       nat:
-        ip: 192.168.2.1/24
         src: 192.168.1.0/24
   cloud_image:
     get_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
@@ -18,28 +18,43 @@ group_vars:
     os_variant: ubuntu20.04
   kvm:
     instances:
-      - name: dev-private-router01
-        memory_in_kib: 2097152
-        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx comment
-        network:
-          provider:
-            host_bridge: br0
-          management:
-            host_bridge: br100
-
-      - name: dev-compute01
-        memory_in_kib: 2097152
+      dev-private-router01:
+        memory: 2048
         vcpu: 2
-        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx comment
+        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
         network:
           provider:
-            host_bridge: br0
-            interfaces:
-              - name: enp1s0
-                mac: "52:54:00:00:00:10"
+            ip: 192.168.1.254/24
+            gateway: 192.168.1.1
+            dns:
+              addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
           management:
-            host_bridge: br100
-            interfaces:
-              - name: enp2s0
-                mac: "52:54:00:00:00:11"
+            ip: 192.168.2.1/24
+      dev-compute01:
+        memory: 2048
+        vcpu: 2
+        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
+        network:
+          management:
+            ip: 192.168.2.11/24
+            gateway: 192.168.2.1
+            dns:
+              addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+        # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
+        template:
+          network:
+            provider:
+              host:
+                bridge: br0
+              vm:
+                interfaces:
+                  enp1s0:
+                    mac: "52:54:00:00:00:10"
+            management:
+              host:
+                bridge: br9
+              vm:
+                interfaces:
+                  enp2s0:
+                    mac: "52:54:00:00:00:11"
 
