@@ -1,4 +1,5 @@
-HOST_BRIDGE_INTERFACE="{{ group_vars.vxlan.provider.interface }}"
+HOST_PROVIDER_BRIDGE_INTERFACE="{{ group_vars.vxlan.provider.interface }}"
+HOST_MANAGEMENT_BRIDGE_INTERFACE="{{ group_vars.vxlan.management.interface }}"
 VXLAN_GW_PROVIDER_IP="{{ group_vars.vxlan.provider.ip }}"
 VXLAN_GW_MANAGEMENT_IP="{{ group_vars.vxlan.management.ip }}"
 VXLAN_NAT_SOURCE_IP_TO_PROVIDER_SEGMENT="{{ group_vars.vxlan.provider.nat.src }}"
