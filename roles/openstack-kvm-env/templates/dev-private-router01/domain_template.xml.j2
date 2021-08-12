@@ -166,7 +166,7 @@
       <address type='pci' domain='0x0000' bus='0x07' slot='0x00' function='0x0'/>
     </controller>
     <interface type='bridge'>
-      <mac address='52:54:00:28:ce:b6'/>
+      <mac address='{{ instance.template.network.provider.bridges.br0.interfaces.enp1s0.mac }}'/>
       <source bridge='br0'/>
       <target dev='vnet11'/>
       <model type='virtio'/>
@@ -174,7 +174,7 @@
       <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
     </interface>
     <interface type='bridge'>
-      <mac address='52:54:00:e0:ac:c0'/>
+      <mac address='{{ instance.template.network.management.bridges.br9.interfaces.enp2s0.mac }}'/>
       <source bridge='br9'/>
       <target dev='vnet12'/>
       <model type='virtio'/>
@@ -182,7 +182,7 @@
       <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
     </interface>
     <interface type='bridge'>
-      <mac address='52:54:00:01:35:65'/>
+      <mac address='{{ instance.template.network.management.bridges.br9.interfaces.enp3s0.mac }}'/>
       <source bridge='br9'/>
       <target dev='vnet13'/>
       <model type='virtio'/>
@@ -190,7 +190,7 @@
       <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
     </interface>
     <interface type='bridge'>
-      <mac address='52:54:00:5c:a3:e8'/>
+      <mac address='{{ instance.template.network.management.bridges.br9.interfaces.enp4s0.mac }}'/>
       <source bridge='br9'/>
       <target dev='vnet14'/>
       <model type='virtio'/>
@@ -198,7 +198,7 @@
       <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
     </interface>
     <interface type='bridge'>
-      <mac address='52:54:00:8f:9f:fe'/>
+      <mac address='{{ instance.template.network.management.bridges.br9.interfaces.enp5s0.mac }}'/>
       <source bridge='br9'/>
       <target dev='vnet15'/>
       <model type='virtio'/>
@@ -206,7 +206,7 @@
       <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
     </interface>
     <interface type='bridge'>
-      <mac address='52:54:00:da:1e:26'/>
+      <mac address='{{ instance.template.network.management.bridges.br9.interfaces.enp6s0.mac }}'/>
       <source bridge='br9'/>
       <target dev='vnet16'/>
       <model type='virtio'/>

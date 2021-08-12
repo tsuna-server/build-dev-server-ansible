@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: 'https://github.com/tsuna-server/vxlan-builder.git'
     dest: /opt/vxlan-builder
-    version: v2.0.0
+    version: v3.0.0
     force: yes
     depth: 1
 
