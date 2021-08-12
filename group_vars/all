@@ -24,12 +24,35 @@ group_vars:
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
         network:
           provider:
-            ip: 192.168.1.254/24
+            ip: 192.168.1.241/24
             gateway: 192.168.1.1
             dns:
               addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
           management:
             ip: 192.168.2.1/24
+        template:
+          network:
+            provider:
+              bridges:
+                br0:
+                  interfaces:
+                    enp1s0:
+                      mac: "52:54:00:00:00:01"
+            management:
+              bridges:
+                br9:
+                  interfaces:
+                    enp2s0:
+                      mac: "52:54:00:00:00:02"
+                    enp3s0:
+                      mac: "52:54:00:00:00:03"
+                    enp4s0:
+                      mac: "52:54:00:00:00:04"
+                    enp5s0:
+                      mac: "52:54:00:00:00:05"
+                    enp6s0:
+                      mac: "52:54:00:00:00:06"
+
       dev-compute01:
         memory: 2048
         vcpu: 2
@@ -44,17 +67,67 @@ group_vars:
         template:
           network:
             provider:
-              host:
-                bridge: br0
-              vm:
-                interfaces:
-                  enp1s0:
-                    mac: "52:54:00:00:00:10"
+              bridges:
+                br0:
+                  interfaces:
+                    enp1s0:
+                      mac: "52:54:00:00:00:11"
             management:
-              host:
-                bridge: br9
-              vm:
-                interfaces:
-                  enp2s0:
-                    mac: "52:54:00:00:00:11"
+              bridges:
+                br9:
+                  interfaces:
+                    enp2s0:
+                      mac: "52:54:00:00:00:12"
+
+      dev-compute02:
+        memory: 2048
+        vcpu: 2
+        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
+        network:
+          management:
+            ip: 192.168.2.12/24
+            gateway: 192.168.2.1
+            dns:
+              addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+        # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
+        template:
+          network:
+            provider:
+              bridges:
+                br0:
+                  interfaces:
+                    enp1s0:
+                      mac: "52:54:00:00:00:21"
+            management:
+              bridges:
+                br9:
+                  interfaces:
+                    enp2s0:
+                      mac: "52:54:00:00:00:22"
+
+      dev-compute03:
+        memory: 2048
+        vcpu: 2
+        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
+        network:
+          management:
+            ip: 192.168.2.13/24
+            gateway: 192.168.2.1
+            dns:
+              addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+        # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
+        template:
+          network:
+            provider:
+              bridges:
+                br0:
+                  interfaces:
+                    enp1s0:
+                      mac: "52:54:00:00:00:31"
+            management:
+              bridges:
+                br9:
+                  interfaces:
+                    enp2s0:
+                      mac: "52:54:00:00:00:32"
 
