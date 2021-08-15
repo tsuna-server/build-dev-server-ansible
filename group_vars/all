@@ -24,6 +24,8 @@ group_vars:
       dev-private-router01:
         memory: 2048
         vcpu: 2
+        disk:
+          size: 20G
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
         network:
           provider:
@@ -54,6 +56,8 @@ group_vars:
       dev-compute01:
         memory: 2048
         vcpu: 2
+        disk:
+          size: 30G
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
         network:
           management:
@@ -80,6 +84,8 @@ group_vars:
       dev-compute02:
         memory: 2048
         vcpu: 2
+        disk:
+          size: 30G
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
         network:
           management:
@@ -106,6 +112,8 @@ group_vars:
       dev-compute03:
         memory: 2048
         vcpu: 2
+        disk:
+          size: 30G
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
         network:
           management:
