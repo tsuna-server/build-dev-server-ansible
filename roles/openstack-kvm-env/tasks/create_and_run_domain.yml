@@ -36,7 +36,7 @@
 
 - name: Create an external snapshot from base image
   ansible.builtin.command:
-    argv: ["qemu-img", "create", "-f", "qcow2", "-b", "../{{ base_image_name }}", "{{ instance.name }}.img"]
+    argv: ["qemu-img", "create", "-F", "qcow2", "-b", "../{{ base_image_name }}", "-f", "qcow2", "{{ instance.name }}.img"]
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
