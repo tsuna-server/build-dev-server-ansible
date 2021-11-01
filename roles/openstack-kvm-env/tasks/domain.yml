@@ -8,9 +8,37 @@
   set_fact:
     instance: "{{ instance | combine( { 'name': item.key } ) }}"
 
+- name: Declare provider_network_ip for the instance
+  set_fact:
+    provider_network_ip: "{%
+                    if 'network' not in instance
+                  -%}(undefined){%
+                    elif 'provider' not in instance.network
+                  -%}(undefined){%
+                    elif 'ip' in instance.network.provider
+                  -%}{{ instance.network.provider.ip }}{%
+                    else
+                  -%}(undefined){%
+                    endif
+                  -%}"
+
+- name: Declare management_network_ip for the instance
+  set_fact:
+    management_network_ip: "{%
+                    if 'network' not in instance
+                  -%}(undefined){%
+                    elif 'management' not in instance.network
+                  -%}(undefined){%
+                    elif 'ip' in instance.network.management
+                  -%}{{ instance.network.management.ip }}{%
+                    else
+                  -%}(undefined){%
+                    endif
+                  -%}"
+
 - name: Debug installing domain
   ansible.builtin.debug:
-    msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ '(undefined)' if 'provider' not in instance.network }}, management.ip={{ '(undefined)' if 'management' not in instance.network }}]"
+    msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ provider_network_ip }}, management.ip={{ management_network_ip }}]"
 
 # List defined domains
 - name: Get defined domains
