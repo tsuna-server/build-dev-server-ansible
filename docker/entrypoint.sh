@@ -24,7 +24,8 @@ main() {
         return 1
     }
 
-    ${ANSIBLE_DIRECTORY}/${PYTHON_VIRTUALENV_DIRECTORY}/bin/ansible-playbook -l target-host -i production site.yml
+    # This instruction does not support option's values that containing spaces
+    ${ANSIBLE_DIRECTORY}/${PYTHON_VIRTUALENV_DIRECTORY}/bin/ansible-playbook -l target-host -i production $@ site.yml
 }
 
 create_ansible_environment() {
