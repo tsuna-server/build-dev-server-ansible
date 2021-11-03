@@ -1,4 +1,4 @@
 ---
-- name: Debuggggggggggggggg
-  ansible.builtin.debug:
-    msg: "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+- include_tasks: do_delete_instance.yml
+  with_dict: "{{ group_vars.kvm.instances }}"
+

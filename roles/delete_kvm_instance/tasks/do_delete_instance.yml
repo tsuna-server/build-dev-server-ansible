@@ -1,0 +1,48 @@
+---
+- name: Declare instance variable for domain.yml
+  set_fact:
+    instance: "{{ item.value }}"
+
+- name: Declare instance.name variable for domain.yml
+  set_fact:
+    instance: "{{ instance | combine( { 'name': item.key } ) }}"
+
+- name: Print a domain name that will be deleted
+  ansible.builtin.debug:
+    msg: "instance.name='{{ instance.name }}'"
+
+- name: Stop the domain
+  community.libvirt.virt:
+    name: "{{ instance.name }}"
+    state: destroyed
+
+- name: List all snapshots of the domain
+  ansible.builtin.script: ./list_snapshot.sh "{{ instance.name }}"
+  register: result
+
+#- name: Debug
+#  ansible.builtin.debug:
+#    msg: "{{ result.stdout.split('\n') }}"
+
+- name: Print an instance name that will be deleted
+  ansible.builtin.debug:
+    msg: "instance.name='{{ result.stdout_lines }}', snapshot='{{ snapshot }}'"
+  loop: "{{ result.stdout_lines }}"
+  loop_control:
+    loop_var: snapshot
+  when: "'stdout_lines' in result"
+
+- name: Delete snapshots of the domain
+  ansible.builtin.command:
+    argv: ["virsh", "snapshot-delete", "{{ instance.name }}", "{{ snapshot }}"]
+  loop: "{{ result.stdout_lines }}"
+  loop_control:
+    loop_var: snapshot
+  register: result
+  when: "'stdout_lines' in result"
+
+- name: Undefine the domain
+  community.libvirt.virt:
+    name: "{{ instance.name }}"
+    command: undefine
+
