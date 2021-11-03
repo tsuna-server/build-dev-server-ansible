@@ -1,4 +1,9 @@
 ---
+- name: List all VMs
+  community.libvirt.virt:
+    command: list_vms
+  register: all_vms
+
 - include_tasks: do_delete_instance.yml
   with_dict: "{{ group_vars.kvm.instances }}"
 
