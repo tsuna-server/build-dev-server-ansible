@@ -1,48 +1,25 @@
 ---
-- name: Declare instance variable for domain.yml
+# These instructions assumes that the variable "all_vms" is already declared.
+
+- name: Declare domain variable for domain.yml
   set_fact:
-    instance: "{{ item.value }}"
+    domain: "{{ item.value }}"
 
-- name: Declare instance.name variable for domain.yml
+- name: Declare domain.name variable for domain.yml
   set_fact:
-    instance: "{{ instance | combine( { 'name': item.key } ) }}"
+    domain: "{{ domain | combine( { 'name': item.key } ) }}"
 
-- name: Print a domain name that will be deleted
-  ansible.builtin.debug:
-    msg: "instance.name='{{ instance.name }}'"
+- include_tasks: do_delete_domain.yml
+  when: domain.name in all_vms.list_vms
 
-- name: Stop the domain
-  community.libvirt.virt:
-    name: "{{ instance.name }}"
-    state: destroyed
-
-- name: List all snapshots of the domain
-  ansible.builtin.script: ./list_snapshot.sh "{{ instance.name }}"
+- name: Stat of the directory of the domain
+  stat:
+    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ domain.name }}/"
   register: result
 
-#- name: Debug
-#  ansible.builtin.debug:
-#    msg: "{{ result.stdout.split('\n') }}"
-
-- name: Print an instance name that will be deleted
-  ansible.builtin.debug:
-    msg: "instance.name='{{ result.stdout_lines }}', snapshot='{{ snapshot }}'"
-  loop: "{{ result.stdout_lines }}"
-  loop_control:
-    loop_var: snapshot
-  when: "'stdout_lines' in result"
-
-- name: Delete snapshots of the domain
-  ansible.builtin.command:
-    argv: ["virsh", "snapshot-delete", "{{ instance.name }}", "{{ snapshot }}"]
-  loop: "{{ result.stdout_lines }}"
-  loop_control:
-    loop_var: snapshot
-  register: result
-  when: "'stdout_lines' in result"
-
-- name: Undefine the domain
-  community.libvirt.virt:
-    name: "{{ instance.name }}"
-    command: undefine
+- name: Cleanup the directory of the domain
+  file:
+    state: absent
+    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ domain.name }}/"
+  when: result.stat.exists
 

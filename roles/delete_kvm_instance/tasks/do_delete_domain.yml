@@ -1,0 +1,37 @@
+---
+# These instructions assumes that the variable "domain" is already declared.
+
+- name: Print a domain name that will be deleted
+  ansible.builtin.debug:
+    msg: "domain.name='{{ domain.name }}'"
+
+- name: Stop the domain
+  community.libvirt.virt:
+    name: "{{ domain.name }}"
+    state: destroyed
+
+- name: List all snapshots of the domain
+  ansible.builtin.script: ./list_snapshot.sh "{{ domain.name }}"
+  register: result
+
+- name: Print an domain name that will be deleted
+  ansible.builtin.debug:
+    msg: "domain.name='{{ result.stdout_lines }}', snapshot='{{ snapshot }}'"
+  loop: "{{ result.stdout_lines }}"
+  loop_control:
+    loop_var: snapshot
+  when: "'stdout_lines' in result"
+
+- name: Delete snapshots of the domain
+  ansible.builtin.command:
+    argv: ["virsh", "snapshot-delete", "{{ domain.name }}", "{{ snapshot }}"]
+  loop: "{{ result.stdout_lines }}"
+  loop_control:
+    loop_var: snapshot
+  register: result
+  when: "'stdout_lines' in result"
+
+- name: Undefine the domain
+  community.libvirt.virt:
+    name: "{{ domain.name }}"
+    command: undefine

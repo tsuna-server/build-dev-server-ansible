@@ -4,6 +4,5 @@
     command: list_vms
   register: all_vms
 
-- include_tasks: do_delete_instance.yml
+- include_tasks: delete_domain.yml
   with_dict: "{{ group_vars.kvm.instances }}"
-
