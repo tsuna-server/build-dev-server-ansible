@@ -60,6 +60,10 @@ You can find the IP `<gateway to management IP segment>` as `group_vars.vxlan.pr
 `<management IP segment>` is determined by the IP addresses of each instances in management IP segment and some of other parameters.
 For example, if each `group_vars.kvm.instances.<instance name>.network.management.ip` are belonging in a IP segment `192.168.2.0/24`, `<management IP segment>` is determined as `192.168.2.0/24`.
 
+# Diagram
+A diagram of the structure that this Ansible will build is like below.  
+![Diagram of the structure](doc/DiagramDrawIO.drawio.svg)
+
 # Links
 * [KVM: Testing cloud-init locally using KVM for an Ubuntu cloud image](https://fabianlee.org/2020/02/23/kvm-testing-cloud-init-locally-using-kvm-for-an-ubuntu-cloud-image/)
 * [Documentation/CreateSnapshot](https://wiki.qemu.org/Documentation/CreateSnapshot)
