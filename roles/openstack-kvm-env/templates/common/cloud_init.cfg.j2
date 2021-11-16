@@ -24,3 +24,11 @@ packages:
   - qemu-guest-agent
 # written to /var/log/cloud-init-output.log
 final_message: "The system is finally up, after $UPTIME seconds"
+# Create swap file only in dev environment
+# https://cloudinit.readthedocs.io/en/latest/topics/examples.html
+{% if 'swap' in group_vars.kvm.instances[instance.name] and 'size' in group_vars.kvm.instances[instance.name].swap -%}
+swap:
+  filename: /swap.img
+  size: "auto"
+  maxsize: {{ group_vars.kvm.instances[instance.name].swap.size }}
+{%- endif %}
