@@ -22,10 +22,13 @@ group_vars:
   kvm:
     instances:
       dev-private-router01:
-        memory: 2048
+        memory: 4096
         vcpu: 2
         disk:
-          size: 20G
+          size: 32G
+        # swap.size is an optional parameter. It can be specified in bytes.
+        swap:
+          size: 4294967296
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
         network:
           provider:
@@ -54,10 +57,12 @@ group_vars:
                       mac: "52:54:00:00:00:02"
 
       dev-compute01:
-        memory: 2048
+        memory: 4096
         vcpu: 2
         disk:
-          size: 30G
+          size: 40G
+        swap:
+          size: 4294967296
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
         network:
           management:
@@ -82,10 +87,12 @@ group_vars:
                       mac: "52:54:00:00:00:12"
 
       dev-compute02:
-        memory: 2048
+        memory: 4096
         vcpu: 2
         disk:
           size: 30G
+        swap:
+          size: 4294967296
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
         network:
           management:
@@ -110,10 +117,12 @@ group_vars:
                       mac: "52:54:00:00:00:22"
 
       dev-compute03:
-        memory: 2048
+        memory: 4096
         vcpu: 2
         disk:
-          size: 30G
+          size: 40G
+        swap:
+          size: 4294967296
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
         network:
           management:
