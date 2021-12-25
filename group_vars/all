@@ -30,6 +30,7 @@ group_vars:
         swap:
           size: 4294967296
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
+        # group_vars.kvm.instances.<instance_name>.network will be applied to the network_config.yaml of the cloud-init.
         network:
           provider:
             ip: 192.168.1.241/24
@@ -39,6 +40,7 @@ group_vars:
           management:
             ip: 192.168.2.1/24
         template:
+          # group_vars.kvm.instances.<instance_name>.template.network will be applied to the domain.xml of the kvm.
           network:
             provider:
               bridges:
@@ -55,6 +57,14 @@ group_vars:
                     # This configuration can not be used in production envieronment in order to this reason.
                     enp2s0:
                       mac: "52:54:00:00:00:02"
+                    enp3s0:
+                      mac: "52:54:00:00:00:03"
+                    enp4s0:
+                      mac: "52:54:00:00:00:04"
+                    enp5s0:
+                      mac: "52:54:00:00:00:05"
+                    enp6s0:
+                      mac: "52:54:00:00:00:06"
 
       dev-compute01:
         memory: 4096
