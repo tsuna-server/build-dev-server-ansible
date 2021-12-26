@@ -21,6 +21,7 @@ group_vars:
     os_variant: ubuntu20.04
   kvm:
     instances:
+
       dev-private-router01:
         memory: 4096
         vcpu: 2
@@ -33,12 +34,17 @@ group_vars:
         # group_vars.kvm.instances.<instance_name>.network will be applied to the network_config.yaml of the cloud-init.
         network:
           provider:
-            ip: 192.168.1.241/24
-            gateway: 192.168.1.1
-            dns:
-              addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+            ethernets:
+              - name: enp1s0
+                addresses: ["192.168.1.241/24"]
+                gateway4: 192.168.1.1
+                dns:
+                  addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
           management:
-            ip: 192.168.2.1/24
+            ethernets:
+              - name: enp2s0
+                addresses: ["192.168.2.1/24"]
+                mtu: 1450
         template:
           # group_vars.kvm.instances.<instance_name>.template.network will be applied to the domain.xml of the kvm.
           network:
@@ -76,10 +82,13 @@ group_vars:
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
         network:
           management:
-            ip: 192.168.2.11/24
-            gateway: 192.168.2.1
-            dns:
-              addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+            ethernets:
+              - name: enp1s0
+                addresses: ["192.168.2.11/24"]
+                mtu: 1450
+                gateway4: 192.168.2.1
+                dns:
+                  addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
           network:
@@ -100,16 +109,19 @@ group_vars:
         memory: 4096
         vcpu: 2
         disk:
-          size: 30G
+          size: 40G
         swap:
           size: 4294967296
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
         network:
           management:
-            ip: 192.168.2.12/24
-            gateway: 192.168.2.1
-            dns:
-              addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+            ethernets:
+              - name: enp1s0
+                addresses: ["192.168.2.12/24"]
+                mtu: 1450
+                gateway4: 192.168.2.1
+                dns:
+                  addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
           network:
@@ -136,10 +148,13 @@ group_vars:
         ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
         network:
           management:
-            ip: 192.168.2.13/24
-            gateway: 192.168.2.1
-            dns:
-              addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+            ethernets:
+              - name: enp1s0
+                addresses: ["192.168.2.13/24"]
+                mtu: 1450
+                gateway4: 192.168.2.1
+                dns:
+                  addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
           network:
@@ -155,3 +170,4 @@ group_vars:
                   interfaces:
                     enp2s0:
                       mac: "52:54:00:00:00:32"
+
