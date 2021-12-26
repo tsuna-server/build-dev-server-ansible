@@ -1,14 +1,24 @@
+# This configuration will be modified entirely after second ansible will be running.
+# According to this reason, this configuration file is as simple as possible.
 version: 2
 ethernets:
-  enp1s0:
-     dhcp4: false
-     dhcp6: false
-  enp2s0:
-     dhcp4: false
-     dhcp6: false
-     addresses: [{{ instance.network.management.ip }}]
-     gateway4: {{ instance.network.management.gateway }}
-     nameservers:
-       addresses: [{% set g = namespace(comma = '') %}{% for item in instance.network.management.dns.addresses %}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor %}]
-       search: [ example.com ]
-     mtu: {{ instance.network.management.mtu }}
+{% for key_role_phase, value_role_phase in instance.network.items() %}
+{% for ethernet in value_role_phase.ethernets %}
+  {{ ethernet.name }}:
+    dhcp4: false
+    dhcp6: false
+{% if 'addresses' in ethernet %}
+    addresses: [{% set g = namespace(comma = '') -%}{% for item in ethernet.addresses -%}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor -%}]
+{% endif -%}
+{% if 'gateway4' in ethernet %}
+    gateway4: {{ ethernet.gateway4 }}
+{% endif -%}
+{% if 'mtu' in ethernet %}
+    mtu: {{ ethernet.mtu }}
+{% endif -%}
+{% if 'dns' in ethernet %}
+    dns:
+      addresses: [{% set g = namespace(comma = '') -%}{% for item in ethernet.dns.addresses -%}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor -%}]
+{% endif -%}
+{% endfor %}
+{% endfor %}

@@ -3,9 +3,15 @@
   set_fact:
     domain_uuid: "{{ 1000 | random | to_uuid }}"
 
+# TODO: domain.xml of private-router might be able to share during other instances
+#- name: Declare resource directory
+#  set_fact:
+#    portion_resource_directory: "{{ instance.name if instance.name.startswith('dev-private-router') else 'common' }}"
+
 - name: Declare resource directory
   set_fact:
-    portion_resource_directory: "{{ instance.name if instance.name.startswith('dev-private-router') else 'common' }}"
+    portion_resource_directory: "common"
+
 
 - name: Create a directory for a new domain
   ansible.builtin.file:
