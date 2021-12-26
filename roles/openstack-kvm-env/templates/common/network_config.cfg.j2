@@ -11,3 +11,4 @@ ethernets:
      nameservers:
        addresses: [{% set g = namespace(comma = '') %}{% for item in instance.network.management.dns.addresses %}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor %}]
        search: [ example.com ]
+     mtu: {{ instance.network.management.mtu }}

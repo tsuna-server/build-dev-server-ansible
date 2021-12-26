@@ -14,3 +14,4 @@ ethernets:
     dhcp4: false
     dhcp6: false
     addresses: [{{ instance.network.management.ip }}]
+    mtu: {{ instance.network.management.mtu }}
