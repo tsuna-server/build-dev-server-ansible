@@ -8,7 +8,12 @@ users:
     groups: users, admin
     home: /home/ubuntu
     shell: /bin/bash
-    lock_passwd: false
+    # TODO: For debugging purpose only, you can set the user's password as 'p@ssw0rd' by declaring `passwd` like below.
+    #       You can also create new passwd manually by typing like below.
+    #         openssl passwd -6 -salt xyz  yourpass
+    #       See also: https://unix.stackexchange.com/questions/81240/manually-generate-password-for-etc-shadow
+    #passwd: $6$xyz$rfUoxhnScmjOykLAVIhgfxmKgIWmTirRSrIZ9j5EJ1Vf765rQS.dCbXjXBx4PuhbcNNrXx2XpwUywQ96C7EJB/
+    #lock_passwd: false
     ssh-authorized-keys:
       - {{ instance.ssh_public_key }}
 # only cert auth via ssh (console access can still login)

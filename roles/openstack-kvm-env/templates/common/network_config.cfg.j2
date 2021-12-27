@@ -16,9 +16,9 @@ ethernets:
 {% if 'mtu' in ethernet %}
     mtu: {{ ethernet.mtu }}
 {% endif -%}
-{% if 'dns' in ethernet %}
-    dns:
-      addresses: [{% set g = namespace(comma = '') -%}{% for item in ethernet.dns.addresses -%}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor -%}]
+{% if 'nameservers' in ethernet %}
+    nameservers:
+      addresses: [{% set g = namespace(comma = '') -%}{% for item in ethernet.nameservers.addresses -%}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor -%}]
 {% endif -%}
 {% endfor %}
 {% endfor %}
