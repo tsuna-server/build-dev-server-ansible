@@ -38,11 +38,15 @@ group_vars:
               - name: enp1s0
                 addresses: ["192.168.1.241/24"]
                 gateway4: 192.168.1.1
-                dns:
+                nameservers:
                   addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
           management:
             ethernets:
               - name: enp2s0
+              - name: enp3s0
+              - name: enp4s0
+              - name: enp5s0
+              - name: enp6s0
                 addresses: ["192.168.2.1/24"]
                 mtu: 1450
         template:
@@ -87,7 +91,7 @@ group_vars:
                 addresses: ["192.168.2.11/24"]
                 mtu: 1450
                 gateway4: 192.168.2.1
-                dns:
+                nameservers:
                   addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
@@ -120,7 +124,7 @@ group_vars:
                 addresses: ["192.168.2.12/24"]
                 mtu: 1450
                 gateway4: 192.168.2.1
-                dns:
+                nameservers:
                   addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
@@ -153,7 +157,7 @@ group_vars:
                 addresses: ["192.168.2.13/24"]
                 mtu: 1450
                 gateway4: 192.168.2.1
-                dns:
+                nameservers:
                   addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
