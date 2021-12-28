@@ -101,9 +101,9 @@
 {% set counter = namespace(value=1) %}
 {% for key_network, value_network in instance.template.network.items() %}
 {% for bridge in value_network.bridges %}
-{% for key_interface, value_interface in bridge.interfaces.items() %}
+{% for ethernet in bridge.ethernets %}
     <interface type='bridge'>
-      <mac address='{{ value_interface.mac }}'/>
+      <mac address='{{ ethernet.mac }}'/>
       <source bridge='{{ bridge.name }}'/>
       <model type='virtio'/>
       <address type='pci' domain='0x0000' bus='0x{{ "%02x" | format(counter.value | int) }}' slot='0x00' function='0x0'/>
