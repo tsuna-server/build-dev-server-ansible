@@ -55,25 +55,25 @@ group_vars:
             provider:
               bridges:
                 - name: br0
-                  interfaces:
-                    enp1s0:
+                  ethernets:
+                    - name: enp1s0
                       mac: "52:54:00:00:00:01"
             management:
               bridges:
                 - name: br9
-                  interfaces:
+                  ethernets:
                     # There are additional 4 interfaces on management segment in production environment such as enp3s0, enp4s0, enp5s0, enp6s0.
                     # The devlop environment only have 1 interface on management side to simplyfy the configuration.
                     # This configuration can not be used in production envieronment in order to this reason.
-                    enp2s0:
+                    - name: enp2s0
                       mac: "52:54:00:00:00:02"
-                    enp3s0:
+                    - name: enp3s0
                       mac: "52:54:00:00:00:03"
-                    enp4s0:
+                    - name: enp4s0
                       mac: "52:54:00:00:00:04"
-                    enp5s0:
+                    - name: enp5s0
                       mac: "52:54:00:00:00:05"
-                    enp6s0:
+                    - name: enp6s0
                       mac: "52:54:00:00:00:06"
 
       dev-compute01:
@@ -99,14 +99,14 @@ group_vars:
             provider:
               bridges:
                 - name: br0
-                  interfaces:
-                    enp1s0:
+                  ethernets:
+                    - name: enp1s0
                       mac: "52:54:00:00:00:11"
             management:
               bridges:
                 - name: br9
-                  interfaces:
-                    enp2s0:
+                  ethernets:
+                    - name: enp2s0
                       mac: "52:54:00:00:00:12"
 
       dev-compute02:
@@ -120,7 +120,7 @@ group_vars:
         network:
           management:
             ethernets:
-              - name: enp1s0
+              - name: enp2s0
                 addresses: ["192.168.2.12/24"]
                 mtu: 1450
                 gateway4: 192.168.2.1
@@ -132,14 +132,14 @@ group_vars:
             provider:
               bridges:
                 - name: br0
-                  interfaces:
-                    enp1s0:
+                  ethernets:
+                    - name: enp1s0
                       mac: "52:54:00:00:00:21"
             management:
               bridges:
                 - name: br9
-                  interfaces:
-                    enp2s0:
+                  ethernets:
+                    - name: enp2s0
                       mac: "52:54:00:00:00:22"
 
       dev-compute03:
@@ -153,7 +153,7 @@ group_vars:
         network:
           management:
             ethernets:
-              - name: enp1s0
+              - name: enp2s0
                 addresses: ["192.168.2.13/24"]
                 mtu: 1450
                 gateway4: 192.168.2.1
@@ -165,13 +165,12 @@ group_vars:
             provider:
               bridges:
                 - name: br0
-                  interfaces:
-                    enp1s0:
+                  ethernets:
+                    - name: enp1s0
                       mac: "52:54:00:00:00:31"
             management:
               bridges:
                 - name: br9
-                  interfaces:
-                    enp2s0:
+                  ethernets:
+                    - name: enp2s0
                       mac: "52:54:00:00:00:32"
-
