@@ -40,9 +40,9 @@ group_vars:
                 gateway4: 192.168.1.1
                 nameservers:
                   addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+              - name: enp2s0
           management:
             ethernets:
-              - name: enp2s0
               - name: enp3s0
               - name: enp4s0
               - name: enp5s0
@@ -67,14 +67,6 @@ group_vars:
                     # This configuration can not be used in production envieronment in order to this reason.
                     - name: enp2s0
                       mac: "52:54:00:00:00:02"
-                    - name: enp3s0
-                      mac: "52:54:00:00:00:03"
-                    - name: enp4s0
-                      mac: "52:54:00:00:00:04"
-                    - name: enp5s0
-                      mac: "52:54:00:00:00:05"
-                    - name: enp6s0
-                      mac: "52:54:00:00:00:06"
 
       dev-compute01:
         memory: 4096
@@ -87,7 +79,7 @@ group_vars:
         network:
           management:
             ethernets:
-              - name: enp1s0
+              - name: enp2s0
                 addresses: ["192.168.2.11/24"]
                 mtu: 1450
                 gateway4: 192.168.2.1
