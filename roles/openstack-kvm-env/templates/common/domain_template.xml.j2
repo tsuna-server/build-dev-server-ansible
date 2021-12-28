@@ -44,7 +44,7 @@
       <driver name='qemu' type='qcow2'/>
       <source file='{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/{{ instance.name }}.img'/>
       <target dev='vda' bus='virtio'/>
-      <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x1'/>
+      <address type='pci' domain='0x0000' bus='0xab' slot='0x00' function='0x0'/>
     </disk>
     <controller type='usb' index='0' model='ich9-ehci1'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x7'/>
@@ -96,7 +96,7 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x5'/>
     </controller>
     <controller type='virtio-serial' index='0'>
-      <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x1'/>
+      <address type='pci' domain='0x0000' bus='0xac' slot='0x00' function='0x0'/>
     </controller>
 {% set counter = namespace(value=1) %}
 {% for key_network, value_network in instance.template.network.items() %}
@@ -138,11 +138,11 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
     </video>
     <memballoon model='virtio'>
-      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x1'/>
+      <address type='pci' domain='0x0000' bus='0xae' slot='0x00' function='0x0'/>
     </memballoon>
     <rng model='virtio'>
       <backend model='random'>/dev/urandom</backend>
-      <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x1'/>
+      <address type='pci' domain='0x0000' bus='0xaf' slot='0x00' function='0x0'/>
     </rng>
   </devices>
 </domain>
