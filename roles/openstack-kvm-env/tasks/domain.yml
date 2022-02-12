@@ -22,15 +22,15 @@
                     endif
                   -%}"
 
-- name: Declare management_network_ip for the instance
+- name: Declare tenant_network_ip for the instance
   set_fact:
-    management_network_ip: "{%
+    tenant_network_ip: "{%
                     if 'network' not in instance
                   -%}(undefined){%
-                    elif 'management' not in instance.network
+                    elif 'tenant' not in instance.network
                   -%}(undefined){%
-                    elif 'ip' in instance.network.management
-                  -%}{{ instance.network.management.ip }}{%
+                    elif 'ip' in instance.network.tenant
+                  -%}{{ instance.network.tenant.ip }}{%
                     else
                   -%}(undefined){%
                     endif
@@ -38,7 +38,7 @@
 
 - name: Debug installing domain
   ansible.builtin.debug:
-    msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ provider_network_ip }}, management.ip={{ management_network_ip }}]"
+    msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ provider_network_ip }}, tenant.ip={{ tenant_network_ip }}]"
 
 # List defined domains
 - name: Get defined domains
