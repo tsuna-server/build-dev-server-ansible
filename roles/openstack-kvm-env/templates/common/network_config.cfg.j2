@@ -2,8 +2,7 @@
 # According to this reason, this configuration file is as simple as possible.
 version: 2
 ethernets:
-{% for key_role_phase, value_role_phase in instance.network.items() %}
-{% for ethernet in value_role_phase.ethernets %}
+{% for ethernet in instance.network.ethernets %}
   {{ ethernet.name }}:
     dhcp4: false
     dhcp6: false
@@ -20,5 +19,4 @@ ethernets:
     nameservers:
       addresses: [{% set g = namespace(comma = '') -%}{% for item in ethernet.nameservers.addresses -%}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor -%}]
 {% endif -%}
-{% endfor %}
 {% endfor %}
