@@ -10,7 +10,7 @@ group_vars:
       nat:
         src: 192.168.2.0/24
       gateway: 192.168.1.1
-    management:
+    tenant:
       interface: br9
       ip: 192.168.2.1/24
       nat:
@@ -57,12 +57,12 @@ group_vars:
                       mac: "52:54:00:00:00:01"
                     - name: enp2s0
                       mac: "52:54:00:00:00:02"
-            management:
+            tenant:
               bridges:
                 - name: br9
                   ethernets:
-                    # There are additional 4 interfaces on management segment in production environment such as enp3s0, enp4s0, enp5s0, enp6s0.
-                    # The devlop environment only have 1 interface on management side to simplyfy the configuration.
+                    # There are additional 4 interfaces on tenant segment in production environment such as enp3s0, enp4s0, enp5s0, enp6s0.
+                    # The devlop environment only have 1 interface on tenant side to simplyfy the configuration.
                     # This configuration can not be used in production envieronment in order to this reason.
                     - name: enp3s0
                       mac: "52:54:00:00:00:03"
@@ -99,7 +99,7 @@ group_vars:
                   ethernets:
                     - name: enp1s0
                       mac: "52:54:00:00:00:11"
-            management:
+            tenant:
               bridges:
                 - name: br9
                   ethernets:
@@ -132,7 +132,7 @@ group_vars:
                   ethernets:
                     - name: enp1s0
                       mac: "52:54:00:00:00:21"
-            management:
+            tenant:
               bridges:
                 - name: br9
                   ethernets:
@@ -165,7 +165,7 @@ group_vars:
                   ethernets:
                     - name: enp1s0
                       mac: "52:54:00:00:00:31"
-            management:
+            tenant:
               bridges:
                 - name: br9
                   ethernets:
