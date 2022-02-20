@@ -1,2 +1,5 @@
 [dev_servers]
 target-host
+
+[dev_servers:vars]
+ansible_user=root
