@@ -3,10 +3,10 @@ hostname: {{ instance.name }}
 fqdn: {{ instance.name }}.example.com
 manage_etc_hosts: true
 users:
-  - name: tuna7
+  - name: sushi7
     sudo: ALL=(ALL) NOPASSWD:ALL
     groups: users, admin
-    home: /home/tuna7
+    home: /home/sushi7
     shell: /bin/bash
     # TODO: For debugging purpose only, you can set the user's password as 'p@ssw0rd' by declaring `passwd` like below.
     #       You can also create new passwd manually by typing like below.
