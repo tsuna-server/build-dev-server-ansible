@@ -14,6 +14,15 @@
     dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ base_image_name }}"
   when: not cloud_image.stat.exists
 
-- include_tasks: domain.yml
+# do_domain will read item.key and item.value.
+# This instruction assumes that they are already declared by calling by "with_dict".
+#
+# If ex_instance is declared:
+#   -> Include domain.yml only if current instance that will be created is same with ex_instance.
+# If ex_instance is not declared:
+#   -> Include domain.yml for all instances.
+- name: Include create_domain.yml
+  include: create_domain.yml
+  when: "(ex_instance is not defined) or ((ex_instance is defined) and (ex_instance == item.key))"
   with_dict: "{{ group_vars.kvm.instances }}"
 
