@@ -99,18 +99,24 @@
       <address type='pci' domain='0x0000' bus='0xac' slot='0x00' function='0x0'/>
     </controller>
 {% set counter = namespace(value=1) %}
-{% for key_network, value_network in instance.template.network.items() %}
-{% for bridge in value_network.bridges %}
-{% for ethernet in bridge.ethernets %}
+{% for interface in instance.template.network.interfaces %}
+{% if interface.type == "bridge" %}
     <interface type='bridge'>
-      <mac address='{{ ethernet.mac }}'/>
-      <source bridge='{{ bridge.name }}'/>
+      <mac address='{{ interface.mac }}'/>
+      <source bridge='{{ interface.source }}'/>
       <model type='virtio'/>
       <address type='pci' domain='0x0000' bus='0x{{ "%02x" | format(counter.value | int) }}' slot='0x00' function='0x0'/>
     </interface>
+{% endif %}
+{% if interface.type == "network" %}
+    <interface type='network'>
+      <mac address='{{ interface.mac }}'/>
+      <source network='{{ interface.source }}'/>
+      <model type='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x{{ "%02x" | format(counter.value | int) }}' slot='0x00' function='0x0'/>
+    </interface>
+{% endif %}
 {% set counter.value = counter.value + 1 %}
-{% endfor %}
-{% endfor %}
 {% endfor %}
     <serial type='pty'>
       <target type='isa-serial' port='0'>
