@@ -49,29 +49,29 @@ group_vars:
         template:
           # group_vars.kvm.instances.<instance_name>.template.network will be applied to the domain.xml of the kvm.
           network:
-            provider:
-              bridges:
-                - name: br0
-                  ethernets:
-                    - name: enp1s0
-                      mac: "52:54:00:00:00:01"
-                    - name: enp2s0
-                      mac: "52:54:00:00:00:02"
-            tenant:
-              bridges:
-                - name: br9
-                  ethernets:
-                    # There are additional 4 interfaces on tenant segment in production environment such as enp3s0, enp4s0, enp5s0, enp6s0.
-                    # The devlop environment only have 1 interface on tenant side to simplyfy the configuration.
-                    # This configuration can not be used in production envieronment in order to this reason.
-                    - name: enp3s0
-                      mac: "52:54:00:00:00:03"
-                    - name: enp4s0
-                      mac: "52:54:00:00:00:04"
-                    - name: enp5s0
-                      mac: "52:54:00:00:00:05"
-                    - name: enp6s0
-                      mac: "52:54:00:00:00:06"
+            interfaces:
+
+              # Explanation of types are...
+              #   bridge: Bridge interface on the host. A virtual interface will be connected to it.
+              #   default: "default" network of libvirt network. A virtual interface will be connected to it.
+              #            default interface will be only used for dummy destinations to prevent 
+              #            Routing Loop when the interfaces on virtual machine connect to bridge interfaces that created on the virtual host.
+              # Explanation of sources are ...
+              #   br0: Bridge interface on the host.
+              #   br9: Bridge interface on the host.
+
+              # enp1s0 connected to br0 on host machine.
+              - type: bridge
+                source: br0
+                mac: "52:54:00:00:00:01"
+              # enp2s0 connected to br0 on host machine.
+              - type: network
+                source: default
+                mac: "52:54:00:00:00:02"
+              # enp3s0 connected to default network on host machine.
+              - type: bridge
+                source: br9
+                mac: "52:54:00:00:00:03"
 
       dev-compute01:
         memory: 4096
