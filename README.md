@@ -33,16 +33,13 @@ You have to copy SSH private key (in this example, that named `private-key`) tha
 
 ```
 $ git clone https://github.com/tsuna-server/build-dev-server-ansible.git
-$ cd build-dev-server-ansible/docker
-$ docker build -t tsutomu/build-dev-server-ansible
-$ cd ../
+$ cd build-dev-server-ansible
 $ cp /path/to/private-key ./private-key
 $ docker run --rm \
     --volume ${PWD}:/opt/ansible \
     --volume /path/to/private-key:/opt/private-key \
     --add-host target-host:x.x.x.x \
-    tsutomu/build-dev-server-ansible
-```
+    tsutomu/ansible-runner
 
 * `--volume /path/to/private-key:/private-key` is the option to specify the private key that can log in to the node that you want to build the environment to.
 * `--add-host target-host:x.x.x.x` is the option to specify the host name and ip which you want to build the environment to.
