@@ -1,22 +1,32 @@
 ---
 group_vars:
   vxlan:
+    # A name of the vxlan
+    name: "vxlan1"
+    gw:
+      name: "vxlan1gw"
     repository:
       url: "https://github.com/tsuna-server/vxlan-builder.git"
       version: v4.0.0
     provider:
       interface: br0
+      # A value of the IP "group_vars.vxlan.provider.ip" will be atattched on the interface "group_vars.vxlan.tenant.interface".
+      # 172.31.245.1/16 will be taken by an router VM instance.
+      # The reason why it is declared here is that the IP is belonging in provider network but it will be attached on tenent interface
+      # and it has a due to passing any packets between tenent-segment and provider-segment.
       ip: 192.168.1.254/24
       nat:
         src: 192.168.2.0/24
       gateway: 192.168.1.1
     tenant:
-      interface: br9
+      interface: br1
+      # A value of the IP "group_vars.vxlan.tenant.ip" will be atattched on the interface "group_vars.vxlan.tenant.interface".
+      # 172.22.1.1/16 will be taken by an router VM instance.
       ip: 192.168.2.1/24
       nat:
         src: 192.168.1.0/24
   cloud_image:
-    get_url: https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+    get_url: https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
     local_saved_dir: /var/kvm/distros
     os_variant: ubuntu20.04
   kvm:
@@ -57,20 +67,20 @@ group_vars:
               #            default interface will be only used for dummy destinations to prevent 
               #            Routing Loop when the interfaces on virtual machine connect to bridge interfaces that created on the virtual host.
               # Explanation of sources are ...
-              #   br0: Bridge interface on the host.
-              #   br9: Bridge interface on the host.
+              #   br0: Bridge interface on the host that is belonging ***provider*** network.
+              #   br1: Bridge interface on the host that is belonging ***tenent*** network.
 
-              # enp1s0 connected to br0 on host machine.
+              # enp1s0 connected to br0 on host machine. It will be used for the interface on provider network.
               - type: bridge
                 source: br0
                 mac: "52:54:00:00:00:01"
-              # enp2s0 connected to br0 on host machine.
+              # enp2s0 connected to br0 on host machine. It will be used for the interface on provider network.
               - type: network
                 source: default
                 mac: "52:54:00:00:00:02"
               # enp3s0 connected to default network on host machine.
               - type: bridge
-                source: br9
+                source: br1
                 mac: "52:54:00:00:00:03"
 
       dev-compute01:
@@ -93,18 +103,15 @@ group_vars:
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
           network:
-            provider:
-              bridges:
-                - name: br0
-                  ethernets:
-                    - name: enp1s0
-                      mac: "52:54:00:00:00:11"
-            tenant:
-              bridges:
-                - name: br9
-                  ethernets:
-                    - name: enp2s0
-                      mac: "52:54:00:00:00:12"
+            interfaces:
+              # enp1s0 connected to br0 on host machine.
+              - type: bridge
+                source: br0
+                mac: "52:54:00:00:00:11"
+              # enp2s0 connected to br0 on host machine.
+              - type: bridge
+                source: br1
+                mac: "52:54:00:00:00:12"
 
       dev-compute02:
         memory: 4096
@@ -126,18 +133,15 @@ group_vars:
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
           network:
-            provider:
-              bridges:
-                - name: br0
-                  ethernets:
-                    - name: enp1s0
-                      mac: "52:54:00:00:00:21"
-            tenant:
-              bridges:
-                - name: br9
-                  ethernets:
-                    - name: enp2s0
-                      mac: "52:54:00:00:00:22"
+            interfaces:
+              # enp1s0 connected to br0 on host machine.
+              - type: bridge
+                source: br0
+                mac: "52:54:00:00:00:21"
+              # enp2s0 connected to br0 on host machine.
+              - type: bridge
+                source: br1
+                mac: "52:54:00:00:00:22"
 
       dev-compute03:
         memory: 4096
@@ -159,15 +163,13 @@ group_vars:
         # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
         template:
           network:
-            provider:
-              bridges:
-                - name: br0
-                  ethernets:
-                    - name: enp1s0
-                      mac: "52:54:00:00:00:31"
-            tenant:
-              bridges:
-                - name: br9
-                  ethernets:
-                    - name: enp2s0
-                      mac: "52:54:00:00:00:32"
+            interfaces:
+              # enp1s0 connected to br0 on host machine.
+              - type: bridge
+                source: br0
+                mac: "52:54:00:00:00:31"
+              # enp2s0 connected to br0 on host machine.
+              - type: bridge
+                source: br1
+                mac: "52:54:00:00:00:32"
+
