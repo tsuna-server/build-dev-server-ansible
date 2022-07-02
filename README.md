@@ -37,7 +37,7 @@ $ cd build-dev-server-ansible
 $ cp /path/to/private-key ./private-key
 $ docker run --rm \
     --volume ${PWD}:/opt/ansible \
-    --volume /path/to/private-key:/opt/private-key \
+    --volume /path/to/private-key:/private-key \
     --add-host target-host:x.x.x.x \
     tsutomu/ansible-runner
 
