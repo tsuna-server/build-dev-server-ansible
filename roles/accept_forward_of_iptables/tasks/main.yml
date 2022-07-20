@@ -9,3 +9,12 @@
     chain: FORWARD
     jump: ACCEPT
 
+- name: Debug
+  ansible.builtin.debug:
+    msg:
+      - "======================================================================================================================="
+      - "[WARNING]"
+      - "Iptables chain FORWARD are all set ACCEPTED to be able to forward any packet during KVM instances and any outside networks"
+      - "even if filters which is for Docker has been set."
+      - "======================================================================================================================="
+
