@@ -1,7 +1,7 @@
 ---
 - import_playbook: localhost.yml
   when: "'delete' not in ansible_run_tags"
-- import_playbook: dev_server.yml
+- import_playbook: dev_servers.yml
   when: "'delete' not in ansible_run_tags"
 - import_playbook: delete_kvm_instance.yml
   #when: "'delete' in ansible_run_tags"

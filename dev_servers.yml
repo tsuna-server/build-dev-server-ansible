@@ -5,5 +5,4 @@
     - common
     - vxlan
     - openstack-kvm-env
-    #- delete_kvm_instance
     - accept_forward_of_iptables
