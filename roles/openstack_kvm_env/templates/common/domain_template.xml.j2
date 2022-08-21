@@ -10,7 +10,7 @@
   <currentMemory unit='MiB'>{{ instance.memory }}</currentMemory>
   <vcpu placement='static'>{{ instance.vcpu }}</vcpu>
   <os>
-    <type arch='x86_64' machine='pc-q35-6.0'>hvm</type>
+    <type arch='x86_64' machine='pc-q35-7.0'>hvm</type>
     <boot dev='hd'/>
     <bootmenu enable='yes'/>
   </os>
@@ -18,7 +18,7 @@
     <acpi/>
     <apic/>
   </features>
-  <cpu mode='host-model' check='partial'/>
+  <cpu mode='host-passthrough' check='none' migratable='on'/>
   <clock offset='utc'>
     <timer name='rtc' tickpolicy='catchup'/>
     <timer name='pit' tickpolicy='delay'/>
@@ -44,25 +44,10 @@
       <driver name='qemu' type='qcow2'/>
       <source file='{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/{{ instance.name }}.img'/>
       <target dev='vda' bus='virtio'/>
-      <address type='pci' domain='0x0000' bus='0xab' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x0'/>
     </disk>
-    <controller type='usb' index='0' model='ich9-ehci1'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x7'/>
-    </controller>
-    <controller type='usb' index='0' model='ich9-uhci1'>
-      <master startport='0'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x0' multifunction='on'/>
-    </controller>
-    <controller type='usb' index='0' model='ich9-uhci2'>
-      <master startport='2'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x1'/>
-    </controller>
-    <controller type='usb' index='0' model='ich9-uhci3'>
-      <master startport='4'/>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x1d' function='0x2'/>
-    </controller>
-    <controller type='sata' index='0'>
-      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+    <controller type='usb' index='0' model='qemu-xhci' ports='15'>
+      <address type='pci' domain='0x0000' bus='0x09' slot='0x00' function='0x0'/>
     </controller>
     <controller type='pci' index='0' model='pcie-root'/>
     <controller type='pci' index='1' model='pcie-root-port'>
@@ -95,27 +80,61 @@
       <target chassis='6' port='0x15'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x5'/>
     </controller>
-    <controller type='virtio-serial' index='0'>
-      <address type='pci' domain='0x0000' bus='0xac' slot='0x00' function='0x0'/>
+    <controller type='pci' index='7' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='7' port='0x16'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x6'/>
     </controller>
+    <controller type='pci' index='8' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='8' port='0x17'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x02' function='0x7'/>
+    </controller>
+    <controller type='pci' index='9' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='9' port='0x18'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x0' multifunction='on'/>
+    </controller>
+    <controller type='pci' index='10' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='10' port='0x19'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x1'/>
+    </controller>
+    <controller type='pci' index='11' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='11' port='0x1a'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x2'/>
+    </controller>
+    <controller type='pci' index='12' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='12' port='0x1b'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x3'/>
+    </controller>
+    <controller type='pci' index='13' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='13' port='0x1c'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x4'/>
+    </controller>
+    <controller type='pci' index='14' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='14' port='0x1d'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x5'/>
+    </controller>
+    <controller type='sata' index='0'>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
+    </controller>
+    <controller type='virtio-serial' index='0'>
+      <address type='pci' domain='0x0000' bus='0x0a' slot='0x00' function='0x0'/>
+    </controller>
+{# This section can declare at most 8 network interfaces. If you want to increase it, You have to re-create template. Please read README.md #}
 {% set counter = namespace(value=1) %}
 {% for interface in instance.template.network.interfaces %}
-{% if interface.type == "bridge" %}
-    <interface type='bridge'>
+    <interface type='{{ interface.type }}'>
       <mac address='{{ interface.mac }}'/>
       <source bridge='{{ interface.source }}'/>
       <model type='virtio'/>
       <address type='pci' domain='0x0000' bus='0x{{ "%02x" | format(counter.value | int) }}' slot='0x00' function='0x0'/>
     </interface>
-{% endif %}
-{% if interface.type == "network" %}
-    <interface type='network'>
-      <mac address='{{ interface.mac }}'/>
-      <source network='{{ interface.source }}'/>
-      <model type='virtio'/>
-      <address type='pci' domain='0x0000' bus='0x{{ "%02x" | format(counter.value | int) }}' slot='0x00' function='0x0'/>
-    </interface>
-{% endif %}
 {% set counter.value = counter.value + 1 %}
 {% endfor %}
     <serial type='pty'>
@@ -140,15 +159,15 @@
     </graphics>
     <audio id='1' type='none'/>
     <video>
-      <model type='vga' vram='16384' heads='1' primary='yes'/>
+      <model type='virtio' heads='1' primary='yes'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
     </video>
     <memballoon model='virtio'>
-      <address type='pci' domain='0x0000' bus='0xae' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x0c' slot='0x00' function='0x0'/>
     </memballoon>
     <rng model='virtio'>
       <backend model='random'>/dev/urandom</backend>
-      <address type='pci' domain='0x0000' bus='0xaf' slot='0x00' function='0x0'/>
+      <address type='pci' domain='0x0000' bus='0x0d' slot='0x00' function='0x0'/>
     </rng>
   </devices>
 </domain>

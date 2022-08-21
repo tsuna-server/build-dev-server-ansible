@@ -4,4 +4,4 @@
   roles:
     - common
     - vxlan
-    - openstack-kvm-env
+    - openstack_kvm_env
