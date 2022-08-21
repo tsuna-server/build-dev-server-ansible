@@ -19,5 +19,3 @@
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
-# TODO: Add interfaces
-
