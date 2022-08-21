@@ -65,7 +65,7 @@ A diagram of the structure that this Ansible will build is like below.
 1. Create new Linux on KVM with cloud image with some interfaces
 1. Shutdown it
 1. Dump it as XML
-1. Merge between it and template
+1. Merge it with template
 1. Delete Linux on KVM
 
 In this section, we provide an example by using Ubuntu 20.04 cloud image.
@@ -129,6 +129,7 @@ EOF
 
 # # You can run virt-install with "--network" options.
 # # Num of "--network" options are the num of interfaces that you want to install maxmum.
+# # 8 interfaces are maximum in this case.
 # # It makes names of interfaces in sequential order like 'enp1s0', 'enp2s0', 'enp3s0'...
 # /usr/bin/virt-install \
    --name ${VM_NAME} \
@@ -153,12 +154,37 @@ After initialized it completely, shutdown it.
 # virsh destroy ${VM_NAME}
 ```
 
-## 
+## Dump it as XML
 
+```
+# virsh dumpxml ${VM_NAME} > ${VM_NAME}.xml
+```
 
-new domain XML to create it
+## Merge it with template
+Merge `${VM_NAME}.xml` with `roles/openstack-kvm-env/templates/common/domain_template.xml.j2`.
+Please let me spkip detelis how to merge it.
 
+## Delete Linux on KVM
 
+* Undefine the instance
+```
+# virsh undefine ${VM_NAME}
+```
+
+* Delete all volumes in a pool
+```
+while read line; do
+    [ -z "$line" ] && continue
+    virsh vol-delete --pool ${VM_NAME} ${line}
+done< <(virsh vol-list ${VM_NAME} | tail -n +3 | awk '{print $1}')
+```
+
+* Delete the pool
+```
+$ sudo virsh pool-destroy ${VM_NAME}
+$ sudo virsh pool-delete ${VM_NAME}
+$ sudo virsh pool-undefine ${VM_NAME}
+```
 
 # Links
 * [KVM: Testing cloud-init locally using KVM for an Ubuntu cloud image](https://fabianlee.org/2020/02/23/kvm-testing-cloud-init-locally-using-kvm-for-an-ubuntu-cloud-image/)
