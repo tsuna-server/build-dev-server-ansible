@@ -126,6 +126,7 @@
     <controller type='virtio-serial' index='0'>
       <address type='pci' domain='0x0000' bus='0x0a' slot='0x00' function='0x0'/>
     </controller>
+{# This section can declare at most 8 network interfaces. If you want to increase it, You have to re-create template. Please read README.md #}
 {% set counter = namespace(value=1) %}
 {% for interface in instance.template.network.interfaces %}
     <interface type='{{ interface.type }}'>
