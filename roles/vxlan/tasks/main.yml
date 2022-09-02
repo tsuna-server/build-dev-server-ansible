@@ -1,35 +1,25 @@
 ---
-- name: Clone vxlan-builder
-  ansible.builtin.git:
-    repo: "{{ group_vars.vxlan.repository.url }}"
-    dest: /opt/vxlan-builder
-    version: "{{ group_vars.vxlan.repository.version }}"
-    force: yes
-    depth: 1
+- name: Stat a directory /opt/vxlan-builder/ exists
+  stat:
+    path: "/opt/vxlan-builder/"
+  register: main_directory
 
-- name: Create configuration for vxlan-builder
-  ansible.builtin.template:
-    src: vxlan.conf.j2
-    dest: /opt/vxlan-builder/vxlan.conf
-    owner: root
-    group: root
-    mode: '0644'
+- name: Stat a file /opt/vxlan-builder/set_vxlan_env.sh exists
+  stat:
+    path: "/opt/vxlan-builder/set_vxlan_env.sh"
+  register: main_file
 
-- name: Create service file
-  ansible.builtin.copy:
-    src: custom-vxlan.service
-    dest: /etc/systemd/system/custom-vxlan.service
-    owner: root
-    group: root
-    mode: '0644'
+- name: Include do_prepare_vxlan_builder.yml if vxlan-builder has not been prepared.
+  include: do_prepare_vxlan_builder.yml
+  when: not main_directory.stat.exists
 
-- name: Do daemon_reload
-  ansible.builtin.systemd:
-    daemon_reload: yes
+- name: B
+  block:
+    - name: A-1
+      include: do_prepare_vxlan_builder.yml
+      when: not main_file.stat.exists
 
-- name: Start and enable custom-vxlan service
-  ansible.builtin.systemd:
-    name: custom-vxlan
-    state: started
-    enabled: yes
+    # This task need not do any tasks to prepare vxlan-builder if it has already been prepared.
+    #   -> (main_file.stat.exists == true) and (main_directory.stat.exist == true)
+  when: main_directory.stat.exists
 

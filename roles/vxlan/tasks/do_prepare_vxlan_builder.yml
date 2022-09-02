@@ -1,0 +1,35 @@
+---
+
+- name: Clone vxlan-builder
+  ansible.builtin.git:
+    repo: "{{ group_vars.vxlan.repository.url }}"
+    dest: /opt/vxlan-builder
+    version: "{{ group_vars.vxlan.repository.version }}"
+    force: yes
+    depth: 1
+
+- name: Create configuration for vxlan-builder
+  ansible.builtin.template:
+    src: vxlan.conf.j2
+    dest: /opt/vxlan-builder/vxlan.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create service file
+  ansible.builtin.copy:
+    src: custom-vxlan.service
+    dest: /etc/systemd/system/custom-vxlan.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Do daemon_reload
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Start and enable custom-vxlan service
+  ansible.builtin.systemd:
+    name: custom-vxlan
+    state: started
+    enabled: yes
