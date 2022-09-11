@@ -3,14 +3,21 @@
   set_fact:
     domain_uuid: "{{ 1000 | random | to_uuid }}"
 
-# TODO: domain.xml of private-router might be able to share during other instances
-#- name: Declare resource directory
-#  set_fact:
-#    portion_resource_directory: "{{ instance.name if instance.name.startswith('dev-private-router') else 'common' }}"
-
 - name: Declare resource directory
   set_fact:
     portion_resource_directory: "common"
+    version_number_of_ubuntu: "{{ group_vars.cloud_image.os_variant | regex_search(version_number_regex, '\\1') | first }}"
+  vars:
+    version_number_regex: '^.*[Uu]buntu[^0-9]*([0-9]+\.[0-9]+)[^0-9]*$'
+
+- name: End if failed to get version-number of Ubuntu
+  ansible.builtin.fail:
+    msg: "Failed to execute next instructions due to failed to get a variable \"version_number_of_ubuntu\". It is empty."
+  when: 'version_number_of_ubuntu | length <= 0'
+
+- name: Print variables declared .
+  ansible.builtin.debug:
+    msg: "portion_resource_directory = {{ portion_resource_directory }}, version_number_of_ubuntu={{ version_number_of_ubuntu }}"
 
 
 - name: Create a directory for a new domain
