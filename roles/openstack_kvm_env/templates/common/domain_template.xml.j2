@@ -3,7 +3,7 @@
   <uuid>{{ domain_uuid }}</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
-      <libosinfo:os id="http://ubuntu.com/ubuntu/20.04"/>
+      <libosinfo:os id="http://ubuntu.com/ubuntu/{{ version_number_of_ubuntu }}"/>
     </libosinfo:libosinfo>
   </metadata>
   <memory unit='MiB'>{{ instance.memory }}</memory>
