@@ -186,6 +186,12 @@ $ sudo virsh pool-delete ${VM_NAME}
 $ sudo virsh pool-undefine ${VM_NAME}
 ```
 
+# To update packages of Ansible
+You can install Ansible with `tsutomu/tsuna-ansible-runner` like below.
+```
+$ docker run --rm --volume ${PWD}:/opt/ansible -ti tsutomu/tsuna-ansible-runner update-requirements-txt
+```
+
 # Links
 * [KVM: Testing cloud-init locally using KVM for an Ubuntu cloud image](https://fabianlee.org/2020/02/23/kvm-testing-cloud-init-locally-using-kvm-for-an-ubuntu-cloud-image/)
 * [Documentation/CreateSnapshot](https://wiki.qemu.org/Documentation/CreateSnapshot)
