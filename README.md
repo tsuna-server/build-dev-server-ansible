@@ -43,6 +43,7 @@ $ docker run --rm \
 
 * `--volume /path/to/private-key:/private-key` is the option to specify the private key that can log in to the node that you want to build the environment to.
 * `--add-host target-host:x.x.x.x` is the option to specify the host name and ip which you want to build the environment to.
+```
 
 ## Add a route after ansible was finished
 You should add a route to connect to the instances on management segment like below.
@@ -187,10 +188,7 @@ $ sudo virsh pool-undefine ${VM_NAME}
 ```
 
 # To update packages of Ansible
-You can install Ansible with `tsutomu/tsuna-ansible-runner` like below.
-```
-$ docker run --rm --volume ${PWD}:/opt/ansible -ti tsutomu/tsuna-ansible-runner update-requirements-txt
-```
+[Upgrade requirements.txt](https://github.com/tsuna-server/ansible-runner#upgrade-requirementstxt)
 
 # Links
 * [KVM: Testing cloud-init locally using KVM for an Ubuntu cloud image](https://fabianlee.org/2020/02/23/kvm-testing-cloud-init-locally-using-kvm-for-an-ubuntu-cloud-image/)
