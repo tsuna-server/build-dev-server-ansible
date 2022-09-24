@@ -29,7 +29,7 @@
 # If ex_instance is not declared:
 #   -> Include domain.yml for all instances.
 - name: Include create_domain.yml
-  include: create_domain.yml
+  include_tasks: create_domain.yml
   when: "(ex_instance is not defined) or ((ex_instance is defined) and (ex_instance == item.key))"
   with_dict: "{{ group_vars.kvm.instances }}"
 
