@@ -53,7 +53,7 @@
     state: running
   register: running_domains
 
-- include: create_and_run_domain.yml
+- include_tasks: create_and_run_domain.yml
   when: "instance.name not in defined_domains.list_vms"
 
 # Make network-default enabled

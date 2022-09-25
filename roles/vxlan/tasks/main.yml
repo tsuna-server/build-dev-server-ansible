@@ -10,13 +10,13 @@
   register: main_file
 
 - name: Include do_prepare_vxlan_builder.yml if vxlan-builder has not been prepared.
-  include: do_prepare_vxlan_builder.yml
+  include_tasks: do_prepare_vxlan_builder.yml
   when: not main_directory.stat.exists
 
 - name: B
   block:
     - name: A-1
-      include: do_prepare_vxlan_builder.yml
+      include_tasks: do_prepare_vxlan_builder.yml
       when: not main_file.stat.exists
 
     # This task need not do any tasks to prepare vxlan-builder if it has already been prepared.
