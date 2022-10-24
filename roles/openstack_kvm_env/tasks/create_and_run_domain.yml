@@ -53,11 +53,13 @@
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
+# Add an additional volume only for cinder node.
 - name: Create an additional disk that will be used as block device for Cinder node
   ansible.builtin.command:
     argv: ["qemu-img", "create", "-f", "qcow2", "./cinder-volumes.img", "{{ cinder.disk.size }}"]
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+  when: "{{ instance.name }} | regex_search(\"^.*cinder.*$\")"
 
 ## Create a new domain with `virt-install` command
 ## TODO: This is for creating domain XML file. It assumes run `virsh dumpxml <domain>`, edit it and save it as a new file after startup. Then we can use the XML file to define a domain.
