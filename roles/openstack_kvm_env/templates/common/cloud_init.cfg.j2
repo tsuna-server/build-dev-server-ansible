@@ -37,3 +37,15 @@ swap:
   size: "auto"
   maxsize: {{ group_vars.kvm.instances[instance.name].swap.size }}
 {%- endif %}
+
+runcmd:
+    pv_volume_name=$(pvdisplay /dev/vdb | grep -i "vg name" | awk '{print $3}')
+    if [ "$pv_volume_name" = "cinder-volumes" ]; then
+        echo "LVM physical volume \"cinder-volumes\" has already created. Skipped to create it." >&2
+        return 0
+    fi
+    wipefs --all /dev/vdb
+    dd if=/dev/zero of=/dev/vdb bs=8M count=128
+    pvcreate /dev/vdb
+    vgcreate cinder-volumes /dev/vdb
+
