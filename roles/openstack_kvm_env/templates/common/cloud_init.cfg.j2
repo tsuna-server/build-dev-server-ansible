@@ -41,7 +41,7 @@ swap:
 # {{ instance.name }}
 
 {% if instance.name | regex_search('^.*cinder.*$') %}
-runcmd:
+runcmd: |
   pvcreate /dev/vdb
   vgcreate cinder-volumes /dev/vdb
 {% endif %}
