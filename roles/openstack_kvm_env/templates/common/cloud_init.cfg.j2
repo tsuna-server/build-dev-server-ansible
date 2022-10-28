@@ -38,6 +38,8 @@ swap:
   maxsize: {{ group_vars.kvm.instances[instance.name].swap.size }}
 {%- endif %}
 
+# {{ inventory_hostname }}
+
 {% if inventory_hostname | regex_search('^.*cinder.*$') %}
 runcmd:
   pvcreate /dev/vdb
