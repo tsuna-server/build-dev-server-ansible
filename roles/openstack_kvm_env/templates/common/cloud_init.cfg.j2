@@ -49,7 +49,17 @@ write_files:
       # NOTE: This is a script to create a cinder LVM volume
       log_err() { echo "$(date) - $1" >&2; }
       log_info() { echo "$(date) - $1"; }
-      echo "eeeeeeeeeeeeeeeeeeeeeeeeee" > /fooooo
+      main() {
+        local device_path="$1"
+
+        [ ! -b "${device_path}" ] && {
+          log_err "A device \"${device_path}\" was not found" >&2
+          return 2
+        }
+        pvcreate "${device_path}"
+        vgcreate cinder-volumes "${device_path}"
+      }
+      main "$@"
       # A script ends to here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     permissions: '0755'
 
