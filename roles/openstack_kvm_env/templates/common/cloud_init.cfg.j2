@@ -64,6 +64,6 @@ write_files:
     permissions: '0755'
 
 runcmd: 
-  - /opt/create_cinder_volume.sh
+  - /opt/create_cinder_volume.sh {{ instance.cinder.disk.path }}
 {% endif %}
 
