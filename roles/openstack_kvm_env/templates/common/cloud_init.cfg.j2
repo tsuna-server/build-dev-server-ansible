@@ -41,8 +41,19 @@ swap:
 # {{ instance.name }}
 
 {% if instance.name | regex_search('^.*cinder.*$') %}
-runcmd: |
-  pvcreate /dev/vdb
-  vgcreate cinder-volumes /dev/vdb
+write_files:
+  - path: /opt/create_cinder_volume.sh
+    content: |
+      #!/usr/bin/env bash
+      # A script starts from here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      # NOTE: This is a script to create a cinder LVM volume
+      log_err() { echo "$(date) - $1" >&2; }
+      log_info() { echo "$(date) - $1"; }
+      echo "eeeeeeeeeeeeeeeeeeeeeeeeee" > /fooooo
+      # A script ends to here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    permissions: '0755'
+
+runcmd: 
+  - /opt/create_cinder_volume.sh
 {% endif %}
 
