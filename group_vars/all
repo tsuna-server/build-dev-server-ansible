@@ -173,3 +173,72 @@ group_vars:
                 source: br1
                 mac: "52:54:00:00:00:32"
 
+      dev-cinder01:
+        memory: 4096
+        vcpu: 2
+        disk:
+          size: 10G
+        # A key "cinder" is only used for nodes that were cinder.
+        # A key "cinder.disk.size" is a size of a block device that will be published for instances and will be formatted LVM for Cinder nodes.
+        cinder:
+          disk:
+            size: 30G
+        swap:
+          size: 4294967296
+        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
+        network:
+          ethernets:
+            - name: enp1s0
+            - name: enp2s0
+              addresses: ["192.168.1.51/24"]
+              mtu: 1450
+              gateway4: 192.168.1.1
+              nameservers:
+                addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+        # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
+        template:
+          network:
+            interfaces:
+              # enp1s0 connected to br0 on host machine.
+              - type: bridge
+                source: br0
+                mac: "52:54:00:01:00:01"
+              # enp2s0 connected to br0 on host machine.
+              - type: bridge
+                source: br1
+                mac: "52:54:00:01:00:02"
+
+      dev-cinder02:
+        memory: 4096
+        vcpu: 2
+        disk:
+          size: 10G
+        # A key "cinder" is only used for nodes that were cinder.
+        # A key "cinder.disk.size" is a size of a block device that will be published for instances and will be formatted LVM for Cinder nodes.
+        cinder:
+          disk:
+            size: 30G
+        swap:
+          size: 4294967296
+        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx foo@bar
+        network:
+          ethernets:
+            - name: enp1s0
+            - name: enp2s0
+              addresses: ["192.168.1.52/24"]
+              mtu: 1450
+              gateway4: 192.168.1.1
+              nameservers:
+                addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
+        # Parameters of `template` will be applied to the xml that can be set kvm domain by `virsh` command
+        template:
+          network:
+            interfaces:
+              # enp1s0 connected to br0 on host machine.
+              - type: bridge
+                source: br0
+                mac: "52:54:00:01:00:11"
+              # enp2s0 connected to br0 on host machine.
+              - type: bridge
+                source: br1
+                mac: "52:54:00:01:00:12"

@@ -46,6 +46,14 @@
       <target dev='vda' bus='virtio'/>
       <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x0'/>
     </disk>
+{% if instance.name | regex_search('^.*cinder.*$') %}
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2'/>
+      <source file='{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/cinder-volumes.img'/>
+      <target dev='vdb' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x1'/>
+    </disk>
+{% endif %}
     <controller type='usb' index='0' model='qemu-xhci' ports='15'>
       <address type='pci' domain='0x0000' bus='0x09' slot='0x00' function='0x0'/>
     </controller>

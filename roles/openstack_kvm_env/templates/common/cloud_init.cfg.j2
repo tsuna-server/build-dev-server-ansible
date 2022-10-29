@@ -37,3 +37,40 @@ swap:
   size: "auto"
   maxsize: {{ group_vars.kvm.instances[instance.name].swap.size }}
 {%- endif %}
+
+# {{ instance.name }}
+
+{% if instance.name | regex_search('^.*cinder.*$') %}
+write_files:
+  - path: /opt/create_cinder_volume.sh
+    content: |
+      #!/usr/bin/env bash
+      # A script starts from here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      # NOTE: This is a script to create a cinder LVM volume
+      log_err() { echo "$(date) - $1" | tee -a /var/log/cloud_init_script.log; }
+      log_info() { echo "$(date) - $1" | tee -a /var/log/cloud_init_script.log; }
+      main() {
+        local device_path="$1"
+
+        [ ! -b "${device_path}" ] && {
+          log_err "A device \"${device_path}\" was not found" >&2
+          return 2
+        }
+        log_info "Create a physical volume at \"${device_path}\""
+        pvcreate "${device_path}"
+        log_info "Create a volume group at \"${device_path}\" named \"cinder-volumes\""
+        vgcreate cinder-volumes "${device_path}"
+
+        log_info "A result of pvdisplay"
+        log_info "$(pvcreate)"
+        log_info "A result of vgdisplay"
+        log_info "$(vgdisplay)"
+      }
+      main "$@"
+      # A script ends to here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    permissions: '0755'
+
+runcmd: 
+  - /opt/create_cinder_volume.sh {{ instance.cinder.disk.path }}
+{% endif %}
+
