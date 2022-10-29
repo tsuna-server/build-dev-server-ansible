@@ -47,8 +47,8 @@ write_files:
       #!/usr/bin/env bash
       # A script starts from here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       # NOTE: This is a script to create a cinder LVM volume
-      log_err() { echo "$(date) - $1" >&2; }
-      log_info() { echo "$(date) - $1"; }
+      log_err() { echo "$(date) - $1" | tee -a /var/log/cloud_init_script.log; }
+      log_info() { echo "$(date) - $1" | tee -a /var/log/cloud_init_script.log; }
       main() {
         local device_path="$1"
 
@@ -56,8 +56,15 @@ write_files:
           log_err "A device \"${device_path}\" was not found" >&2
           return 2
         }
+        log_info "Create a physical volume at \"${device_path}\""
         pvcreate "${device_path}"
+        log_info "Create a volume group at \"${device_path}\" named \"cinder-volumes\""
         vgcreate cinder-volumes "${device_path}"
+
+        log_info "A result of pvdisplay"
+        log_info "$(pvcreate)"
+        log_info "A result of vgdisplay"
+        log_info "$(vgdisplay)"
       }
       main "$@"
       # A script ends to here >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
