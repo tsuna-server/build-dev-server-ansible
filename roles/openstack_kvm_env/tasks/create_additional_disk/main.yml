@@ -1,7 +1,7 @@
 ---
 - name: Deeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeebug
   ansible.builtin.debug:
-    msg: "inventory_hostname={{ instance.name }}"
+    msg: "inventory_hostname={{ instance.name }}, disk_index={{ ansible_loop.index }}"
 
 #- name: Create additional disks if needed
 #  ansible.builtin.command:

@@ -1,35 +1,35 @@
 ---
-- name: Declare provider_network_ip for the instance
-  set_fact:
-    provider_network_ip: "{%
-                    if 'network' not in instance
-                  -%}(undefined){%
-                    elif 'provider' not in instance.network
-                  -%}(undefined){%
-                    elif 'ip' in instance.network.provider
-                  -%}{{ instance.network.provider.ip }}{%
-                    else
-                  -%}(undefined){%
-                    endif
-                  -%}"
+#- name: Declare provider_network_ip for the instance
+#  set_fact:
+#    provider_network_ip: "{%
+#                    if 'network' not in instance
+#                  -%}(undefined){%
+#                    elif 'provider' not in instance.network
+#                  -%}(undefined){%
+#                    elif 'ip' in instance.network.provider
+#                  -%}{{ instance.network.provider.ip }}{%
+#                    else
+#                  -%}(undefined){%
+#                    endif
+#                  -%}"
+#
+#- name: Declare tenant_network_ip for the instance
+#  set_fact:
+#    tenant_network_ip: "{%
+#                    if 'network' not in instance
+#                  -%}(undefined){%
+#                    elif 'tenant' not in instance.network
+#                  -%}(undefined){%
+#                    elif 'ip' in instance.network.tenant
+#                  -%}{{ instance.network.tenant.ip }}{%
+#                    else
+#                  -%}(undefined){%
+#                    endif
+#                  -%}"
 
-- name: Declare tenant_network_ip for the instance
-  set_fact:
-    tenant_network_ip: "{%
-                    if 'network' not in instance
-                  -%}(undefined){%
-                    elif 'tenant' not in instance.network
-                  -%}(undefined){%
-                    elif 'ip' in instance.network.tenant
-                  -%}{{ instance.network.tenant.ip }}{%
-                    else
-                  -%}(undefined){%
-                    endif
-                  -%}"
-
-- name: Debug installing domain
-  ansible.builtin.debug:
-    msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ provider_network_ip }}, tenant.ip={{ tenant_network_ip }}]"
+#- name: Debug installing domain
+#  ansible.builtin.debug:
+#    msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ provider_network_ip }}, tenant.ip={{ tenant_network_ip }}]"
 
 - name: Create UUID for new domain
   set_fact:
@@ -97,6 +97,8 @@
   when: "'additional_disks' in instance"
   loop_control:
     loop_var: disk
+    extended: yes
+    #index_var: disk_index
   loop: '{{ instance.additional_disks }}'
 
 #                              ## Create a new domain with `virt-install` command
