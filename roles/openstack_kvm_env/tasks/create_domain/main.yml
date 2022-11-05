@@ -8,51 +8,6 @@
   set_fact:
     instance: "{{ instance | combine( { 'name': item.key } ) }}"
 
-- name: Declare provider_network_ip for the instance
-  set_fact:
-    provider_network_ip: "{%
-                    if 'network' not in instance
-                  -%}(undefined){%
-                    elif 'provider' not in instance.network
-                  -%}(undefined){%
-                    elif 'ip' in instance.network.provider
-                  -%}{{ instance.network.provider.ip }}{%
-                    else
-                  -%}(undefined){%
-                    endif
-                  -%}"
-
-- name: Declare tenant_network_ip for the instance
-  set_fact:
-    tenant_network_ip: "{%
-                    if 'network' not in instance
-                  -%}(undefined){%
-                    elif 'tenant' not in instance.network
-                  -%}(undefined){%
-                    elif 'ip' in instance.network.tenant
-                  -%}{{ instance.network.tenant.ip }}{%
-                    else
-                  -%}(undefined){%
-                    endif
-                  -%}"
-
-- name: Debug installing domain
-  ansible.builtin.debug:
-    msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ provider_network_ip }}, tenant.ip={{ tenant_network_ip }}]"
-
-# List defined domains
-- name: Get defined domains
-  community.libvirt.virt:
-    command: list_vms
-  register: defined_domains
-
-# List running domains
-- name: Get running domains
-  community.libvirt.virt:
-    command: list_vms
-    state: running
-  register: running_domains
-
 - include_tasks: create_and_run_domain.yml
   when: "instance.name not in defined_domains.list_vms"
 
@@ -61,6 +16,13 @@
   ansible.builtin.script: ./enable_network_autostarted.sh
   register: result_of_the_script
   failed_when: ( result_of_the_script.rc != 0 )
+
+# List running domains
+- name: Get running domains
+  community.libvirt.virt:
+    command: list_vms
+    state: running
+  register: running_domains
 
 # Start domain if the domain was already defined but not running.
 # Domain was already existed and running if create_and_run_domain.yml was executed previously.
