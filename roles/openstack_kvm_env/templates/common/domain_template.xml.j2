@@ -52,7 +52,7 @@
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
       <source file='{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/disk{{ count.value }}.img'/>
-      <target dev='vdb' bus='virtio'/>
+      <target dev='vd{{ "abcdefghijklmnopqrstuvwxyz"[count.value] }}' bus='virtio'/>
       <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x{{ count.value }}'/>
     </disk>
 {% set count.value = count.value + 1 %}

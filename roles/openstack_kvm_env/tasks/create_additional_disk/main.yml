@@ -3,14 +3,9 @@
 #   disk: A disk that contains size of it for the instance.
 #   disk.size: Size of a disk that will be added.
 
-- name: Deeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeebug
-  ansible.builtin.debug:
-    msg: "inventory_hostname={{ instance.name }}, disk_path={{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/disk{{ ansible_loop.index }}.img, size={{ disk.size }}"
-
-- name: Create additional disks if needed
+- name: "Create an additional disk (instance_name={{ instance.name }}, disk_file_path={{ group_vars.cloud_image.local_saved_dir }}/disk{{ ansible_loop.index }}.img, size={{ disk.size }})"
   ansible.builtin.command:
     argv: ["qemu-img", "create", "-f", "qcow2", "./disk{{ ansible_loop.index }}.img", "{{ disk.size }}"]
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
-  when: "instance.name | regex_search(\"^.*(cinder|storage).*$\")"
 

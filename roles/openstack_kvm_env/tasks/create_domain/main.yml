@@ -18,23 +18,15 @@
   when: "instance.name not in defined_domains.list_vms"
 
 # Make network-default enabled
-#                   - name: Make network-default enabled
-#                     ansible.builtin.script: ./enable_network_autostarted.sh
-#                     register: result_of_the_script
-#                     failed_when: ( result_of_the_script.rc != 0 )
-#                   
-#                   # List running domains
-#                   - name: Get running domains
-#                     community.libvirt.virt:
-#                       command: list_vms
-#                       state: running
-#                     register: running_domains
-#                   
-#                   # Start domain if the domain was already defined but not running.
-#                   # Domain was already existed and running if create_and_run_domain.yml was executed previously.
-#                   - name: Domain should be running
-#                     community.libvirt.virt:
-#                       name: "{{ instance.name }}"
-#                       state: running
-#                     when: "instance.name not in running_domains.list_vms"
+- name: Make network-default enabled
+  ansible.builtin.script: ./enable_network_autostarted.sh
+  register: result_of_the_script
+  failed_when: ( result_of_the_script.rc != 0 )
+
+# Start domain if the domain was already defined but not running.
+# Domain was already existed and running if create_and_run_domain.yml was executed previously.
+- name: Domain should be running
+  community.libvirt.virt:
+    name: "{{ instance.name }}"
+    state: running
 
