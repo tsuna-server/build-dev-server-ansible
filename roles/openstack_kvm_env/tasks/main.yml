@@ -1,25 +1,6 @@
 ---
-- name: Define base image name
-  set_fact:
-    base_image_name: "{{ group_vars.cloud_image.get_url | basename }}"
-
-- name: Register cloud image stat
-  stat:
-    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ base_image_name }}"
-  register: cloud_image
-
-- name: A directory that will be downloaded a cloud-image should be existed
-  ansible.builtin.file:
-    path: "{{ group_vars.cloud_image.local_saved_dir }}"
-    state: directory
-    recurse: yes
-    mode: '0755'
-
-- name: Download cloud image of ubuntu if it was not existed
-  get_url:
-    url: "{{ group_vars.cloud_image.get_url }}"
-    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ base_image_name }}"
-  when: not cloud_image.stat.exists
+- name: Include download cloud image
+  include_tasks: download_base_image.yml
 
 # do_domain will read item.key and item.value.
 # This instruction assumes that they are already declared by calling by "with_dict".
