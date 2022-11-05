@@ -130,11 +130,11 @@
 #                                  argv: ["qemu-img", "resize", "{{ instance.name }}.img", "+{{ instance.disk.size }}"]
 #                                args:
 #                                  chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
-#                              
-#                              - name: Create domain.xml for debug
-#                                ansible.builtin.template:
-#                                  src: "{{ portion_resource_directory }}/domain_template.xml.j2"
-#                                  dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
+
+- name: Create domain.xml for debug
+  ansible.builtin.template:
+    src: "{{ portion_resource_directory }}/domain_template.xml.j2"
+    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
 #                              
 #                              - name: Define a new domain from an XML for router
 #                                community.libvirt.virt:
