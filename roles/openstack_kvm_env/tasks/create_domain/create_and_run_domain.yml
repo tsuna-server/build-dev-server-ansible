@@ -31,13 +31,6 @@
   ansible.builtin.debug:
     msg: "Create and running domain[name={{ instance.name }}, provider.ip={{ provider_network_ip }}, tenant.ip={{ tenant_network_ip }}]"
 
-# List defined domains
-- name: Get defined domains
-  community.libvirt.virt:
-    command: list_vms
-  register: defined_domains
-
-
 - name: Create UUID for new domain
   set_fact:
     domain_uuid: "{{ 1000 | random | to_uuid }}"
@@ -92,52 +85,59 @@
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
-- name: Create an additional disk that will be used as block device for Cinder node
-  ansible.builtin.command:
-    argv: ["qemu-img", "create", "-f", "qcow2", "./cinder-volumes.img", "{{ instance.cinder.disk.size }}"]
-  args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
-  when: "instance.name | regex_search(\"^.*cinder.*$\")"
+#####- name: Create additional disks if needed
+#####  ansible.builtin.command:
+#####    argv: ["qemu-img", "create", "-f", "qcow2", "./cinder-volumes.img", "{{ instance.cinder.disk.size }}"]
+#####  args:
+#####    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+#####  when: "instance.name | regex_search(\"^.*cinder.*$\")"
 
-## Create a new domain with `virt-install` command
-## TODO: This is for creating domain XML file. It assumes run `virsh dumpxml <domain>`, edit it and save it as a new file after startup. Then we can use the XML file to define a domain.
-#- name: virt-install a domain
-#  ansible.builtin.command:
-#    argv: ["/usr/bin/virt-install",
-#               "--name", "{{ instance.name }}",
-#               "--virt-type", "kvm",
-#               "--memory", "{{ instance.memory }}",
-#               "--vcpus", "2",
-#               "--boot", "hd,menu=on",
-#               "--disk", "path={{ instance.name }}-seed.img,device=cdrom",
-#               "--disk", "path={{ instance.name }}.img,device=disk",
-#               "--graphics", "vnc",
-#               "--os-type", "Linux",
-#               "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
-#               "--network", "bridge:{{ instance.name_of_host_bridge }}",
-#               "--console", "pty,target_type=serial",
-#               "--noautoconsole"
-#           ]
-#  args:
-#    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+- name: Include create_additional_disk/main.yml
+  include_tasks: create_additional_disk/main.yml
+  when: "'additional_disks' in instance"
+  loop_control:
+    loop_var: disk
+  loop: '{{ instance.additional_disks }}'
 
-# Define a domain follow each conditionals #############################################
-#
-# File system in a disk will be expanded by cloud-init automatically.
-# You can expand disk size only in this instruction
-- name: Expand a primary disk size
-  ansible.builtin.command:
-    argv: ["qemu-img", "resize", "{{ instance.name }}.img", "+{{ instance.disk.size }}"]
-  args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
-
-- name: Create domain.xml for debug
-  ansible.builtin.template:
-    src: "{{ portion_resource_directory }}/domain_template.xml.j2"
-    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
-
-- name: Define a new domain from an XML for router
-  community.libvirt.virt:
-    command: define
-    xml: "{{ lookup('template', portion_resource_directory+'/domain_template.xml.j2') }}"
+#                              ## Create a new domain with `virt-install` command
+#                              ## TODO: This is for creating domain XML file. It assumes run `virsh dumpxml <domain>`, edit it and save it as a new file after startup. Then we can use the XML file to define a domain.
+#                              #- name: virt-install a domain
+#                              #  ansible.builtin.command:
+#                              #    argv: ["/usr/bin/virt-install",
+#                              #               "--name", "{{ instance.name }}",
+#                              #               "--virt-type", "kvm",
+#                              #               "--memory", "{{ instance.memory }}",
+#                              #               "--vcpus", "2",
+#                              #               "--boot", "hd,menu=on",
+#                              #               "--disk", "path={{ instance.name }}-seed.img,device=cdrom",
+#                              #               "--disk", "path={{ instance.name }}.img,device=disk",
+#                              #               "--graphics", "vnc",
+#                              #               "--os-type", "Linux",
+#                              #               "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
+#                              #               "--network", "bridge:{{ instance.name_of_host_bridge }}",
+#                              #               "--console", "pty,target_type=serial",
+#                              #               "--noautoconsole"
+#                              #           ]
+#                              #  args:
+#                              #    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+#                              
+#                              # Define a domain follow each conditionals #############################################
+#                              #
+#                              # File system in a disk will be expanded by cloud-init automatically.
+#                              # You can expand disk size only in this instruction
+#                              - name: Expand a primary disk size
+#                                ansible.builtin.command:
+#                                  argv: ["qemu-img", "resize", "{{ instance.name }}.img", "+{{ instance.disk.size }}"]
+#                                args:
+#                                  chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+#                              
+#                              - name: Create domain.xml for debug
+#                                ansible.builtin.template:
+#                                  src: "{{ portion_resource_directory }}/domain_template.xml.j2"
+#                                  dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
+#                              
+#                              - name: Define a new domain from an XML for router
+#                                community.libvirt.virt:
+#                                  command: define
+#                                  xml: "{{ lookup('template', portion_resource_directory+'/domain_template.xml.j2') }}"
 

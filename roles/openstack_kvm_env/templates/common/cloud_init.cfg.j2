@@ -71,6 +71,8 @@ write_files:
     permissions: '0755'
 
 runcmd: 
-  - /opt/create_cinder_volume.sh {{ instance.cinder.disk.path }}
+  # It supports only 1 disk for Cinder so far.
+  # And it assumes that the node for cinder already has an empty device "/dev/vdb".
+  - /opt/create_cinder_volume.sh /dev/vdb
 {% endif %}
 

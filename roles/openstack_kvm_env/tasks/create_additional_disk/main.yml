@@ -1,0 +1,12 @@
+---
+- name: Deeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeebug
+  ansible.builtin.debug:
+    msg: "inventory_hostname={{ instance.name }}"
+
+#- name: Create additional disks if needed
+#  ansible.builtin.command:
+#    argv: ["qemu-img", "create", "-f", "qcow2", "./cinder-volumes.img", "{{ instance.cinder.disk.size }}"]
+#  args:
+#    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+#  when: "instance.name | regex_search(\"^.*cinder.*$\")"
+
