@@ -69,3 +69,4 @@
     name: "{{ instance.name }}"
     state: running
   when: "instance.name not in running_domains.list_vms"
+

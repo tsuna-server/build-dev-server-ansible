@@ -1,6 +1,6 @@
 ---
-- name: Include download cloud image
-  include_tasks: download_base_image.yml
+- name: Include download_base_image/main.yml
+  include_tasks: download_base_image/main.yml
 
 # do_domain will read item.key and item.value.
 # This instruction assumes that they are already declared by calling by "with_dict".
@@ -9,8 +9,8 @@
 #   -> Include domain.yml only if current instance that will be created is same with ex_instance.
 # If ex_instance is not declared:
 #   -> Include domain.yml for all instances.
-- name: Include create_domain.yml
-  include_tasks: create_domain.yml
+- name: Include create_domain/main.yml
+  include_tasks: create_domain/main.yml
   when: "(ex_instance is not defined) or ((ex_instance is defined) and (ex_instance == item.key))"
   with_dict: "{{ group_vars.kvm.instances }}"
 

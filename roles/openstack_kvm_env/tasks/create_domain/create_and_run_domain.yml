@@ -53,7 +53,6 @@
   args:
     chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
 
-# Add an additional volume only for cinder node.
 - name: Create an additional disk that will be used as block device for Cinder node
   ansible.builtin.command:
     argv: ["qemu-img", "create", "-f", "qcow2", "./cinder-volumes.img", "{{ instance.cinder.disk.size }}"]
