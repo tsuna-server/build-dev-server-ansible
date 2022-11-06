@@ -1,7 +1,6 @@
 ---
-# Variables
-#   disk: A disk that contains size of it for the instance.
-#   disk.size: Size of a disk that will be added.
+- name: "Include validate_additional_disk.yml"
+  include_tasks: validate_additional_disk.yml
 
 - name: "Create an additional disk (instance_name={{ instance.name }}, disk_file_path={{ group_vars.cloud_image.local_saved_dir }}/disk{{ ansible_loop.index }}.img, size={{ disk.size }})"
   ansible.builtin.command:
