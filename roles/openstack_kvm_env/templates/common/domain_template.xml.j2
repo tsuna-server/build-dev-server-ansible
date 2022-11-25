@@ -46,7 +46,7 @@
       <target dev='vda' bus='virtio'/>
       <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x0'/>
     </disk>
-{% if instance.name | regex_search('^.*(cinder|storage).*$') %}
+{% if instance.name | regex_search('^.*(cinder|swift|storage).*$') %}
 {% set count = namespace(value=1) %}
 {% for disk in instance.additional_disks %}
     <disk type='file' device='disk'>
