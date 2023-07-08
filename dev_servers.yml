@@ -3,6 +3,6 @@
   become: yes
   roles:
     - common
-    - vxlan
+    #- vxlan
     - openstack_kvm_env
     - accept_forward_of_iptables
