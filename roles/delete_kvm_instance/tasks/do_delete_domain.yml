@@ -35,3 +35,4 @@
   community.libvirt.virt:
     name: "{{ domain.name }}"
     command: undefine
+    flags: "nvram"
