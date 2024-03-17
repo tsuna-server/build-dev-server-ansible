@@ -1,22 +1,3 @@
-# This configuration will be modified entirely after second ansible will be running.
-# According to this reason, this configuration file is as simple as possible.
-version: 2
-ethernets:
-{% for ethernet in instance.network.ethernets %}
-  {{ ethernet.name }}:
-    dhcp4: false
-    dhcp6: false
-{% if 'addresses' in ethernet %}
-    addresses: [{% set g = namespace(comma = '') -%}{% for item in ethernet.addresses -%}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor -%}]
-{% endif -%}
-{% if 'gateway4' in ethernet %}
-    gateway4: {{ ethernet.gateway4 }}
-{% endif -%}
-{% if 'mtu' in ethernet %}
-    mtu: {{ ethernet.mtu }}
-{% endif -%}
-{% if 'nameservers' in ethernet %}
-    nameservers:
-      addresses: [{% set g = namespace(comma = '') -%}{% for item in ethernet.nameservers.addresses -%}{{ g.comma }}{{ item }}{% set g.comma = ', ' %}{% endfor -%}]
-{% endif -%}
-{% endfor %}
+{% if 'autoinstall' in instance and 'network' in instance["autoinstall"] %}
+{{ instance["autoinstall"]["network"] | pretty_yaml(indent=0) }}
+{% endif %}

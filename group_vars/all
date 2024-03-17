@@ -1,5 +1,62 @@
 ---
 group_vars:
+  spec:
+    controllers: &spec_in_controllers
+      memory: 4096
+      vcpu: 2
+      disk:
+        size: 32G        # Size of /dev/vda
+      swap:
+        size: 4294967296
+    comstorages: &spec_in_comstorages
+      memory: 4096
+      vcpu: 2
+      disk:
+        size: 40G
+      swap:
+        size: 4294967296
+
+  autoinstalls:
+    commons:
+      ssh: &a9s_ssh_in_commons
+        install-server: yes
+        authorized-keys:
+          - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOETK2IbbTPHajYDIUaXAtmPL04P+MZQI7VKjSB0sxkL TsutomuNakamura@github.com"
+    controllers:
+      network:
+        ethernets: &a9s_net_in_controllers
+          enp1s0: &a92_net_enp1s0_in_controllers
+            dhcp4: false
+            dhcp6: false
+            gateway4: 172.31.0.1
+            nameservers:
+              addresses: ["172.31.0.1", "8.8.8.8", "8.8.4.4"]
+            # addresses: ["172.31.130.1/16"]    # addresses on enp1s0 should be declared on each hosts
+          enp2s0: &a92_net_enp2s0_in_controllers
+            dhcp4: false
+            dhcp6: false
+          enp3s0: &a92_net_enp3s0_in_controllers
+            <<: *a92_net_enp2s0_in_controllers
+          enp4s0: &a92_net_enp4s0_in_controllers
+            <<: *a92_net_enp2s0_in_controllers
+          enp5s0: &a92_net_enp5s0_in_controllers
+            <<: *a92_net_enp2s0_in_controllers
+          enp6s0: &a92_net_enp6s0_in_controllers
+            <<: *a92_net_enp2s0_in_controllers
+            mtu: 1450
+
+    comstorages:
+      network:
+        ethernets:
+          enp1s0: &a92_net_enp1s0_in_comstorages
+            <<: *a92_net_enp2s0_in_controllers
+          enp2s0:
+            <<: *a92_net_enp1s0_in_comstorages
+            gateway4: 172.28.0.1
+            nameservers:
+              addresses: ['172.31.0.1', '8.8.8.8', '8.8.4.4']
+            #addresses: ['172.28.1.11/16']        # addresses should be declared in each hosts
+
   vxlan:
     # A name of the vxlan
     name: "vxlan1"
@@ -25,50 +82,30 @@ group_vars:
       ip: 192.168.2.1/24
       nat:
         src: 192.168.1.0/24
+
   cloud_image:
     get_url: https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img
     local_saved_dir: /var/kvm/distros
     os_variant: ubuntu20.04
+
   kvm:
     instances:
-
       dev-controller01:
-        memory: 4096
-        vcpu: 2
-        disk:
-          size: 32G
-        # swap.size is an optional parameter. It can be specified in bytes.
-        swap:
-          size: 4294967296
-        ssh_public_key: ssh-ed25519 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx tsutomu@arch
-        # group_vars.kvm.instances.<instance_name>.network will be applied to the network_config.yaml of the cloud-init.
+        <<: *spec_in_controllers
+        autoinstalls:
+          ssh:
+            <<: *a9s_ssh_in_commons
+
         network:
           ethernets:
-            - name: enp1s0
-              addresses: ["192.168.1.11/24"]
-              gateway4: 192.168.1.1
-              nameservers:
-                addresses: ["192.168.1.1", "8.8.8.8", "8.8.4.4"]
-            - name: enp2s0
-            - name: enp3s0
-            - name: enp4s0
-            - name: enp5s0
-            - name: enp6s0
-              addresses: ["192.168.2.1/24"]
-              mtu: 1450
+            <<: *a9s_ssh_in_commons
         template:
           # group_vars.kvm.instances.<instance_name>.template.network will be applied to the domain.xml of the kvm.
           network:
             interfaces:
-
-              # Explanation of types are...
-              #   bridge: Bridge interface on the host. A virtual interface will be connected to it.
-              #   default: "default" network of libvirt network. A virtual interface will be connected to it.
-              #            default interface will be only used for dummy destinations to prevent 
-              #            Routing Loop when the interfaces on virtual machine connect to bridge interfaces that created on the virtual host.
-              # Explanation of sources are ...
-              #   br0: Bridge interface on the host that is belonging ***provider*** network.
-              #   br1: Bridge interface on the host that is belonging ***tenent*** network.
+              enp1s0:
+              <<: *a92_net_enp1s0_in_controllers
+              addresses: ["172.31.130.1/16"]    # addresses on enp1s0 should be declared on each hosts
 
               # enp1s0 connected to br0 on host machine. It will be used for the interface on provider network.
               - type: bridge

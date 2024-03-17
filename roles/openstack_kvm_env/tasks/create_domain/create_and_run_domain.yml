@@ -100,6 +100,10 @@
     src: "{{ portion_resource_directory }}/domain_template.xml.j2"
     dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
 
+- name: "Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaail"
+  ansible.builtin.fail:
+    msg: "Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaailed"
+
 - name: "Define a new domain from an XML (instance={{ instance.name }})"
   community.libvirt.virt:
     command: define
