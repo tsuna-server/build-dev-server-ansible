@@ -26,19 +26,33 @@
     state: directory
     mode: '0755'
 
+- name: Declare variables to use templates for autoinstall
+  set_fact:
+    tmpl_cloud_init: "cloud_init_autoinstall.cfg.j2"
+    tmpl_network_config: "network_config_autoinstall.cfg.j2"
+  when:
+    - 'autoinstall' in instance
+
+- name: Declare variables to use templates for non autoinstall
+  set_fact:
+    tmpl_cloud_init: "cloud_init.cfg.j2"
+    tmpl_network_config: "network_config.cfg.j2"
+  when:
+    - 'autoinstall' not in instance
+
 # Same cloud_init.cfg.j2 is used between all nodes
-- name: Create cloud_init.cfg
+- name: "Create cloud_init.cfg. A template \"common/{{ tmpl_cloud_init }}\" will be used."
   ansible.builtin.template:
-    src: "common/cloud_init.cfg.j2"
+    src: "{{ portion_resource_directory }}/{{ tmpl_cloud_init }}"
     dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/cloud_init.cfg"
     owner: root
     group: root
     mode: '644'
     backup: no
 
-- name: Create network config
+- name: "Create a network config. A template \"common/{{ tmpl_network_config }}\" will be used."
   ansible.builtin.template:
-    src: "{{ portion_resource_directory }}/network_config.cfg.j2"
+    src: "{{ portion_resource_directory }}/{{ tmpl_network_config }}"
     dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/network_config.cfg"
 
 - name: Create seed image to insert cloud and network configs
