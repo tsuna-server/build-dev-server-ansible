@@ -14,12 +14,12 @@
 
 - name: Stat of the directory of the domain
   stat:
-    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ domain.name }}/"
+    path: "{{ group_vars.kvm.local_saved_dir }}/{{ domain.name }}/"
   register: result
 
 - name: Cleanup the directory of the domain
   file:
     state: absent
-    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ domain.name }}/"
+    path: "{{ group_vars.kvm.local_saved_dir }}/{{ domain.name }}/"
   when: result.stat.exists
 
