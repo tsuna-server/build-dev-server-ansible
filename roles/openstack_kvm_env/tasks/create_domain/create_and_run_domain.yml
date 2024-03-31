@@ -1,4 +1,24 @@
 ---
+# Declare a variable of configuration of the instance
+- name: Check whether instance.cloud_image_id is existed
+  ansible.builtin.fail:
+    msg: "Assertion failed. An instance {{ instance.name }}(group_vars.kvm.instances.{{ instance.name }}) does not have an element \"cloud_image_id\""
+  when: 'cloud_image_id' not in instance
+
+- name: Get an index of cloud_images
+  ansible.builtin.set_fact:
+    index_of_cloud_images: "{{ lookup('ansible.utils.index_of', group_vars.cloud_images, 'eq', instance.cloud_image_id, 'id') }}"
+
+- name: Check whether the index_of_cloud_images was obtained
+  ansible.builtin.fail:
+    msg: "A variable index_of_cloud_images was not defined or empty. The instruction previously might be failed."
+  when: index_of_cloud_images | length > 0
+
+- name: "Get an element of the configuration of the instance"
+  ansible.builtin.set_fact:
+    element_of_instance: "{{ group_vars.cloud_images[index_of_cloud_images] }}"
+
+# Create an instance
 - name: Create UUID for new domain
   set_fact:
     domain_uuid: "{{ 1000 | random | to_uuid }}"
