@@ -110,7 +110,7 @@
 #               "--disk", "path={{ instance.name }}.img,device=disk",
 #               "--graphics", "vnc",
 #               "--os-type", "Linux",
-#               "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
+#               "--os-variant", "{{ element_of_instance.os_variant }}",
 #               "--network", "bridge:{{ instance.name_of_host_bridge }}",
 #               "--console", "pty,target_type=serial",
 #               "--noautoconsole"
