@@ -22,7 +22,7 @@
 
 - name: Create a directory for a new domain
   ansible.builtin.file:
-    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    path: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
     state: directory
     mode: '0755'
 
@@ -44,7 +44,7 @@
 - name: "Create cloud_init.cfg. A template \"common/{{ tmpl_cloud_init }}\" will be used."
   ansible.builtin.template:
     src: "{{ portion_resource_directory }}/{{ tmpl_cloud_init }}"
-    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/cloud_init.cfg"
+    dest: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/cloud_init.cfg"
     owner: root
     group: root
     mode: '644'
@@ -53,19 +53,19 @@
 - name: "Create a network config. A template \"common/{{ tmpl_network_config }}\" will be used."
   ansible.builtin.template:
     src: "{{ portion_resource_directory }}/{{ tmpl_network_config }}"
-    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/network_config.cfg"
+    dest: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/network_config.cfg"
 
 - name: Create seed image to insert cloud and network configs
   ansible.builtin.command:
     argv: ["cloud-localds", "-v", "--network-config", "network_config.cfg", "{{ instance.name }}-seed.img", "cloud_init.cfg"]
   args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
 - name: Create an external snapshot from base image
   ansible.builtin.command:
     argv: ["qemu-img", "create", "-F", "qcow2", "-b", "../{{ base_image_name }}", "-f", "qcow2", "{{ instance.name }}.img"]
   args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
 - name: Include create_additional_disk/main.yml
   include_tasks: create_additional_disk/main.yml
@@ -96,7 +96,7 @@
 #               "--noautoconsole"
 #           ]
 #  args:
-#    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+#    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
 
 # Define a domain follow each conditionals #############################################
@@ -107,16 +107,12 @@
   ansible.builtin.command:
     argv: ["qemu-img", "resize", "{{ instance.name }}.img", "+{{ instance.disk.size }}"]
   args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
 - name: Create domain.xml for debug
   ansible.builtin.template:
     src: "{{ portion_resource_directory }}/domain_template.xml.j2"
-    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
-
-- name: "Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaail"
-  ansible.builtin.fail:
-    msg: "Faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaailed"
+    dest: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
 
 - name: "Define a new domain from an XML (instance={{ instance.name }})"
   community.libvirt.virt:
