@@ -48,14 +48,14 @@
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
-      <source file='{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/{{ instance.name }}-seed.img'/>
+      <source file='{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/{{ instance.name }}-seed.img'/>
       <target dev='sda' bus='sata'/>
       <readonly/>
       <address type='drive' controller='0' bus='0' target='0' unit='0'/>
     </disk>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/{{ instance.name }}.img'/>
+      <source file='{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/{{ instance.name }}.img'/>
       <target dev='vda' bus='virtio'/>
       <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x0'/>
     </disk>
@@ -64,7 +64,7 @@
 {% for disk in instance.additional_disks %}
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/disk{{ count.value }}.img'/>
+      <source file='{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/disk{{ count.value }}.img'/>
       <target dev='vd{{ "abcdefghijklmnopqrstuvwxyz"[count.value] }}' bus='virtio'/>
       <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x{{ count.value }}'/>
     </disk>
