@@ -3,20 +3,20 @@
 - name: Check whether instance.cloud_image_id is existed
   ansible.builtin.fail:
     msg: "Assertion failed. An instance {{ instance.name }}(group_vars.kvm.instances.{{ instance.name }}) does not have an element \"cloud_image_id\""
-  when: 'cloud_image_id' not in instance
+  when: "'cloud_image_id' not in instance"
 
-- name: Get an index of cloud_images
+- name: "Get an index of cloud_images (cloud_image_id={{ instance.cloud_image_id }})"
   ansible.builtin.set_fact:
     index_of_cloud_images: "{{ lookup('ansible.utils.index_of', group_vars.cloud_images, 'eq', instance.cloud_image_id, 'id') }}"
 
-- name: Check whether the index_of_cloud_images was obtained
+- name: "Check whether the index_of_cloud_images was obtained (index_of_cloud_images={{ index_of_cloud_images }})"
   ansible.builtin.fail:
     msg: "A variable index_of_cloud_images was not defined or empty. The instruction previously might be failed."
-  when: index_of_cloud_images | length > 0
+  when: index_of_cloud_images | length <= 0
 
 - name: "Get an element of the configuration of the instance"
   ansible.builtin.set_fact:
-    element_of_instance: "{{ group_vars.cloud_images[index_of_cloud_images] }}"
+    element_of_instance: "{{ group_vars.cloud_images[index_of_cloud_images | int] }}"
 
 # Create an instance
 - name: Create UUID for new domain
@@ -39,26 +39,24 @@
   ansible.builtin.debug:
     msg: "portion_resource_directory = {{ portion_resource_directory }}, version_number_of_ubuntu={{ version_number_of_ubuntu }}"
 
-
+# >
 - name: Create a directory for a new domain
   ansible.builtin.file:
     path: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
     state: directory
     mode: '0755'
 
-- name: Declare variables to use templates for autoinstall
+- name: "Declare variables to use templates for autoinstall"
   set_fact:
     tmpl_cloud_init: "cloud_init_autoinstall.cfg.j2"
     tmpl_network_config: "network_config_autoinstall.cfg.j2"
-  when:
-    - 'autoinstall' in instance
+  when: "'autoinstall' in instance"
 
 - name: Declare variables to use templates for non autoinstall
   set_fact:
     tmpl_cloud_init: "cloud_init.cfg.j2"
     tmpl_network_config: "network_config.cfg.j2"
-  when:
-    - 'autoinstall' not in instance
+  when: "'autoinstall' not in instance"
 
 # Same cloud_init.cfg.j2 is used between all nodes
 - name: "Create cloud_init.cfg. A template \"common/{{ tmpl_cloud_init }}\" will be used."
