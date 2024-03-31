@@ -26,7 +26,7 @@
 - name: Declare resource directory
   set_fact:
     portion_resource_directory: "common"
-    version_number_of_ubuntu: "{{ group_vars.cloud_image.os_variant | regex_search(version_number_regex, '\\1') | first }}"
+    version_number_of_ubuntu: "{{ element_of_instance.os_variant | regex_search(version_number_regex, '\\1') | first }}"
   vars:
     version_number_regex: '^.*[Uu]buntu[^0-9]*([0-9]+\.[0-9]+)[^0-9]*$'
 
