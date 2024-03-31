@@ -16,7 +16,7 @@
     recurse: yes
     mode: '0755'
 
-- name: "Download cloud image of ubuntu if it was not existed {{ cloud_image.get_url }}"
+- name: "Download cloud image of ubuntu if it was not existed"
   get_url:
     url: "{{ cloud_image.get_url }}"
     dest: "{{ group_vars.kvm.local_saved_dir }}/{{ base_image_name }}"
