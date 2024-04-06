@@ -39,24 +39,16 @@
   ansible.builtin.debug:
     msg: "portion_resource_directory = {{ portion_resource_directory }}, version_number_of_ubuntu={{ version_number_of_ubuntu }}"
 
-# >
 - name: Create a directory for a new domain
   ansible.builtin.file:
     path: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
     state: directory
     mode: '0755'
 
-- name: "Declare variables to use templates for autoinstall"
-  set_fact:
-    tmpl_cloud_init: "cloud_init_autoinstall.cfg.j2"
-    tmpl_network_config: "network_config_autoinstall.cfg.j2"
-  when: "'autoinstall' in instance"
-
 - name: Declare variables to use templates for non autoinstall
   set_fact:
     tmpl_cloud_init: "cloud_init.cfg.j2"
     tmpl_network_config: "network_config.cfg.j2"
-  when: "'autoinstall' not in instance"
 
 # Same cloud_init.cfg.j2 is used between all nodes
 - name: "Create cloud_init.cfg. A template \"common/{{ tmpl_cloud_init }}\" will be used."
