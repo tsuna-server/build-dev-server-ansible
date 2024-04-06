@@ -1,7 +1,0 @@
-#cloud-config
-{% if 'autoinstall' in instance -%}
-{{ instance["autoinstall"] | pretty_yaml(indent=0) }}
-{%- endif %}
-
-resize_rootfs: false
-ssh_deletekeys: false
