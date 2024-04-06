@@ -7,7 +7,7 @@
 - name: "Register cloud image stat {{ group_vars.kvm.local_saved_dir }}/{{ base_image_name }}"
   stat:
     path: "{{ group_vars.kvm.local_saved_dir }}/{{ base_image_name }}"
-  register: file_cloud_image
+  register: cloud_image_path
 
 - name: "A directory that will be downloaded a cloud-image should be existed ({{ group_vars.kvm.local_saved_dir }})"
   ansible.builtin.file:
@@ -20,4 +20,4 @@
   get_url:
     url: "{{ cloud_image.get_url }}"
     dest: "{{ group_vars.kvm.local_saved_dir }}/{{ base_image_name }}"
-  when: not file_cloud_image.stat.exists
+  when: not cloud_image_path.stat.exists
