@@ -16,7 +16,12 @@
   set_fact:
     instance: "{{ instance | combine( {'cloud_image': group_vars.cloud_iamges[index_of_cloud_image | int]} ) }}"
 
-# List defined domains
+# Download cloud image if it was not existed.
+- include_tasks: do_download_image.yml
+  vars:
+    cloud_image: "{{ instance.cloud_image }}"
+
+# Create and run domain if it was not existed.
 - name: Get defined domains
   community.libvirt.virt:
     command: list_vms

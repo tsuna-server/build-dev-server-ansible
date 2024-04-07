@@ -1,6 +1,6 @@
 ---
-- name: Include download_base_image/main.yml
-  include_tasks: download_base_image/main.yml
+###- name: Include download_base_image/main.yml
+###  include_tasks: download_base_image/main.yml
 
 # do_domain will read item.key and item.value.
 # This instruction assumes that they are already declared by calling by "with_dict".
