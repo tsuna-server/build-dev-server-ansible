@@ -153,7 +153,7 @@
     </controller>
 {# This section can declare at most 8 network interfaces. If you want to increase it, You have to re-create template. Please read README.md #}
 {% set counter = namespace(value=1) %}
-{% for interface in instance.template.network.interfaces %}
+{% for interface in instance.domain_template.network.interfaces %}
     <interface type='{{ interface.type }}'>
       <mac address='{{ interface.mac }}'/>
 {% if interface.type == "bridge" %}
