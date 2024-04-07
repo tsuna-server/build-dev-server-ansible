@@ -14,7 +14,7 @@
 
 - name: Declare instance.cloud_image variable for downloading its image
   set_fact:
-    instance: "{{ instance | combine( {'cloud_image': group_vars.cloud_iamges[index_of_cloud_image | int]} ) }}"
+    instance: "{{ instance | combine( {'cloud_image': group_vars.cloud_images[index_of_cloud_image | int]} ) }}"
 
 # Download cloud image if it was not existed.
 - include_tasks: do_download_image.yml
