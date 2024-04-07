@@ -1,7 +1,0 @@
----
-- name: Include do_download_image.yml
-  include_tasks: do_download_image.yml
-  loop_control:
-    loop_var:
-      cloud_image
-  with_items: "{{ group_vars.cloud_images }}"
