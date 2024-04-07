@@ -8,6 +8,14 @@
   set_fact:
     instance: "{{ instance | combine( { 'name': item.key } ) }}"
 
+- name: "Declare index of cloud_image to fetch the element from group_vars.cloud_images"
+  set_fact:
+    index_of_cloud_image: "{{ lookup('ansible.utils.index_of', group_vars.cloud_images, 'eq', instance.cloud_image_id, 'id') }}"
+
+- name: Declare instance.cloud_image variable for downloading its image
+  set_fact:
+    instance: "{{ instance | combine( {'cloud_image': group_vars.cloud_iamges[index_of_cloud_image | int]} ) }}"
+
 # List defined domains
 - name: Get defined domains
   community.libvirt.virt:
