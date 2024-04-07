@@ -115,7 +115,7 @@
 # You can expand disk size only in this instruction
 - name: Expand a primary disk size
   ansible.builtin.command:
-    argv: ["qemu-img", "resize", "{{ instance.name }}.img", "+{{ instance.disk.size }}"]
+    argv: ["qemu-img", "resize", "{{ instance.name }}.img", "+{{ instance.resources.disk.size }}"]
   args:
     chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
