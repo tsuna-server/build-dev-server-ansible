@@ -1,2 +1,2 @@
 #cloud-config
-{{ instance | pretty_yaml(indent=4) }}
+{{ instance.cloud_config | pretty_yaml(indent=0) }}
