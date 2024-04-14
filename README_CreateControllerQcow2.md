@@ -53,6 +53,8 @@ apt-get update
 ```
 INSTANCE_TYPE="controller"    # If you want to create a qcow2 image for controllers
 INSTANCE_TYPE="comstorage"    # If you want to create a qcow2 image for comstorages
+
+UBUNTU_CODE="jammy"
 ```
 
 ```
@@ -150,4 +152,67 @@ sudo debootstrap \
    $HOME/cloud-image-ubuntu-from-scratch/chroot \
    http://jp.archive.ubuntu.com/ubuntu/
 ```
+
+```
+sudo mount --rbind /dev $HOME/cloud-image-ubuntu-from-scratch/chroot/dev
+sudo mount --rbind /run $HOME/cloud-image-ubuntu-from-scratch/chroot/run
+sudo mount --rbind /sys $HOME/cloud-image-ubuntu-from-scratch/chroot/sys
+sudo mount --rbind /proc $HOME/cloud-image-ubuntu-from-scratch/chroot/proc
+```
+
+```
+sudo chroot $HOME/cloud-image-ubuntu-from-scratch/chroot /usr/bin/env \
+    UBUNTU_CODE=${UBUNTU_CODE} INSTANCE_TYPE=${INSTANCE_TYPE} L_DEV=${L_DEV} /bin/bash --login
+```
+
+```
+export HOME=/root
+export LC_ALL=C
+echo "${INSTANCE_TYPE}" > /etc/hostname
+```
+
+```
+cat << EOF > /etc/apt/sources.list
+deb http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE} main restricted universe multiverse
+deb-src http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE} main restricted universe multiverse
+
+deb http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE}-security main restricted universe multiverse
+deb-src http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE}-security main restricted universe multiverse
+
+deb http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE}-updates main restricted universe multiverse
+deb-src http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE}-updates main restricted universe multiverse
+EOF
+```
+
+```
+blkid ${L_DEV}*
+> /dev/loop3: PTUUID="ffa96a9e-a534-402e-9e42-ec3e9ce92118" PTTYPE="gpt"
+> /dev/loop3p1: UUID="BB34-0305" BLOCK_SIZE="512" TYPE="vfat" PARTLABEL="EFI System" PARTUUID="394a0967-ed11-42d7-b885-c2d4f87e0b2b"
+> /dev/loop3p2: UUID="2c742071-7c57-44ce-85da-4b54e6311dd4" BLOCK_SIZE="4096" TYPE="ext4" PARTLABEL="Linux filesystem" PARTUUID="e028c4a6-a3f8-4f48-b691-65065f3cfc8d"
+> /dev/loop3p3: UUID="yKTvg5-k6BP-SjAa-aB3Z-WB29-PRFJ-aKtfSX" TYPE="LVM2_member" PARTLABEL="Linux LVM" PARTUUID="a7159554-574f-450d-8e8f-c6a4f4811b12"
+
+#blkid /dev/mapper/lvm--vg01-lvm--vg01*
+#> /dev/mapper/lvm--vg01-lvm--vg01--log: UUID="4a5de200-8d56-4b4d-980d-689cfccbd021" BLOCK_SIZE="512" TYPE="xfs"
+#> /dev/mapper/lvm--vg01-lvm--vg01--root: UUID="05d7611d-e724-44d1-8ea7-bc64babadbcb" BLOCK_SIZE="512" TYPE="xfs"
+
+blkid /dev/lvm-vg01/*
+```
+
+```
+cat << EOF > /etc/fstab
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system>         <mount point>   <type>  <options>                       <dump>  <pass>
+
+UUID="05d7611d-e724-44d1-8ea7-bc64babadbcb" / xfs rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota        0 1
+UUID="2c742071-7c57-44ce-85da-4b54e6311dd4" /boot ext4 rw,relatime     0 2
+UUID="BB34-0305"       /boot/efi       vfat    rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,utf8,errors=remount-ro   0 2
+UUID="4a5de200-8d56-4b4d-980d-689cfccbd021" /var/log xfs rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota        0 1
+EOF
+```
+
 
