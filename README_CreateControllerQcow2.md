@@ -218,4 +218,92 @@ UUID="4a5de200-8d56-4b4d-980d-689cfccbd021" /var/log xfs rw,relatime,attr2,inode
 EOF
 ```
 
+```
+apt-get update
+DEBIAN_FRONTEND=noninteractive apt-get install -y systemd-sysv
+dbus-uuidgen > /etc/machine-id
+ln -fs /etc/machine-id /var/lib/dbus/machine-id
+dpkg-divert --local --rename --add /sbin/initctl
+ln -s /bin/true /sbin/initctl
+```
+
+```
+DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    xfsprogs os-prober ifupdown \
+    network-manager resolvconf locales \
+    build-essential module-assistant cloud-init \
+    grub2 grub-pc linux-generic
+```
+
+```
+cat <<EOF > /etc/network/interfaces
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+EOF
+```
+
+```
+# https://serverfault.com/a/689947
+echo "Asia/Tokyo" > /etc/timezone
+dpkg-reconfigure -f noninteractive tzdata
+
+sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+sed -i -e 's/# ja_JP.UTF-8 UTF-8/ja_JP.UTF-8 UTF-8/' /etc/locale.gen
+dpkg-reconfigure --frontend=noninteractive locales
+update-locale LANG=en_US.UTF-8
+```
+
+```
+dpkg-reconfigure resolvconf -f noninteractive
+```
+
+```
+cat <<EOF > /etc/NetworkManager/NetworkManager.conf
+[main]
+rc-manager=resolvconf
+plugins=ifupdown,keyfile
+dns=default
+
+[ifupdown]
+managed=false
+EOF
+```
+
+```
+dpkg-reconfigure network-manager -f noninteractive
+apt-get install -y grub-efi
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=arch --boot-directory=/boot/efi/EFI --recheck
+update-grub
+update-initramfs -u
+```
+
+```
+truncate -s 0 /etc/machine-id
+rm /sbin/initctl
+dpkg-divert --rename --remove /sbin/initctl
+
+apt-get clean
+rm -rf /tmp/* ~/.bash_history
+#umount /proc
+#umount /sys
+#umount /dev/pts
+export HISTSIZE=0
+exit
+```
+
+```
+sudo umount -R $HOME/cloud-image-ubuntu-from-scratch/chroot/
+
+sudo losetup -D
+```
+
+```
+qemu-img convert -f raw cloud-ubuntu-image.raw -O qcow2 openstack-${INSTANCE_TYPE}.qcow2
+```
 
