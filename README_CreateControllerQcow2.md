@@ -163,7 +163,9 @@ sudo mount --rbind /proc $HOME/cloud-image-ubuntu-from-scratch/chroot/proc
 ```
 sudo chroot $HOME/cloud-image-ubuntu-from-scratch/chroot /usr/bin/env \
     UBUNTU_CODE=${UBUNTU_CODE} INSTANCE_TYPE=${INSTANCE_TYPE} L_DEV=${L_DEV} /bin/bash --login
+```
 
+```
 echo "UBUNTU_CODE=${UBUNTU_CODE}, INSTANCE_TYPE=${INSTANCE_TYPE}, L_DEV=${L_DEV}"
 ```
 
@@ -278,7 +280,7 @@ EOF
 ```
 dpkg-reconfigure network-manager -f noninteractive
 apt-get install -y grub-efi
-grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=arch --boot-directory=/boot/efi/EFI --recheck
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --boot-directory=/boot/efi/EFI --recheck
 grub-mkconfig -o /boot/efi/EFI/ubuntu/grub.cfg
 update-initramfs -u
 ```
