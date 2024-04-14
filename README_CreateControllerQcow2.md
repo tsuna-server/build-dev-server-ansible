@@ -234,7 +234,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
     xfsprogs os-prober ifupdown \
     network-manager resolvconf locales \
     build-essential module-assistant cloud-init \
-    grub2 grub-pc linux-generic
+    grub2 grub-pc linux-generic lvm2
 ```
 
 ```
