@@ -264,7 +264,7 @@ dpkg-reconfigure resolvconf -f noninteractive
 ```
 
 ```
-cat <<EOF > /etc/NetworkManager/NetworkManager.conf
+cat << EOF > /etc/NetworkManager/NetworkManager.conf
 [main]
 rc-manager=resolvconf
 plugins=ifupdown,keyfile
@@ -279,7 +279,7 @@ EOF
 dpkg-reconfigure network-manager -f noninteractive
 apt-get install -y grub-efi
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=arch --boot-directory=/boot/efi/EFI --recheck
-update-grub
+grub-mkconfig -o /boot/efi/EFI/ubuntu/grub.cfg
 update-initramfs -u
 ```
 
@@ -287,17 +287,14 @@ update-initramfs -u
 truncate -s 0 /etc/machine-id
 rm /sbin/initctl
 dpkg-divert --rename --remove /sbin/initctl
-
 apt-get clean
 rm -rf /tmp/* ~/.bash_history
-#umount /proc
-#umount /sys
-#umount /dev/pts
 export HISTSIZE=0
 exit
 ```
 
 ```
+sudo mount --make-rslave $HOME/cloud-image-ubuntu-from-scratch/chroot/
 sudo umount -R $HOME/cloud-image-ubuntu-from-scratch/chroot/
 
 sudo losetup -D
