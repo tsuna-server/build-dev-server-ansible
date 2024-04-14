@@ -60,10 +60,8 @@ UBUNTU_CODE="jammy"
 ```
 DEBIAN_FRONTEND=noninteractive sudo apt-get -y update
 DEBIAN_FRONTEND=noninteractive sudo apt-get -y install \
-   debootstrap \
-   qemu-utils \
-   qemu-system \
-   genisoimage
+   debootstrap qemu-utils qemu-system \
+   genisoimage xfsprogs lvm2
 ```
 
 ```
@@ -75,6 +73,7 @@ if [ "${INSTANCE_TYPE}" = "comstorage" ]; then
 else
     size_of_disk="34359738368"
 fi
+echo $size_of_disk
 dd if=/dev/zero of=cloud-ubuntu-image.raw bs=1 count=0 seek=${size_of_disk} status=progress
 ```
 
@@ -91,6 +90,7 @@ else
     sgdisk -n 2:0:+512M -t 2:8300 -c 2:"Linux filesystem" cloud-ubuntu-image.raw
     sgdisk -n 3:0: -t 3:8e00 -c 3:"Linux LVM" cloud-ubuntu-image.raw
 fi
+gdisk -l ./cloud-ubuntu-image.raw
 ```
 
 ```
@@ -163,12 +163,15 @@ sudo mount --rbind /proc $HOME/cloud-image-ubuntu-from-scratch/chroot/proc
 ```
 sudo chroot $HOME/cloud-image-ubuntu-from-scratch/chroot /usr/bin/env \
     UBUNTU_CODE=${UBUNTU_CODE} INSTANCE_TYPE=${INSTANCE_TYPE} L_DEV=${L_DEV} /bin/bash --login
+
+echo "UBUNTU_CODE=${UBUNTU_CODE}, INSTANCE_TYPE=${INSTANCE_TYPE}, L_DEV=${L_DEV}"
 ```
 
 ```
 export HOME=/root
 export LC_ALL=C
 echo "${INSTANCE_TYPE}" > /etc/hostname
+cat /etc/hostname
 ```
 
 ```
@@ -182,6 +185,7 @@ deb-src http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE}-security main restri
 deb http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE}-updates main restricted universe multiverse
 deb-src http://jp.archive.ubuntu.com/ubuntu/ ${UBUNTU_CODE}-updates main restricted universe multiverse
 EOF
+cat /etc/apt/sources.list
 ```
 
 ```
@@ -191,11 +195,10 @@ blkid ${L_DEV}*
 > /dev/loop3p2: UUID="2c742071-7c57-44ce-85da-4b54e6311dd4" BLOCK_SIZE="4096" TYPE="ext4" PARTLABEL="Linux filesystem" PARTUUID="e028c4a6-a3f8-4f48-b691-65065f3cfc8d"
 > /dev/loop3p3: UUID="yKTvg5-k6BP-SjAa-aB3Z-WB29-PRFJ-aKtfSX" TYPE="LVM2_member" PARTLABEL="Linux LVM" PARTUUID="a7159554-574f-450d-8e8f-c6a4f4811b12"
 
-#blkid /dev/mapper/lvm--vg01-lvm--vg01*
-#> /dev/mapper/lvm--vg01-lvm--vg01--log: UUID="4a5de200-8d56-4b4d-980d-689cfccbd021" BLOCK_SIZE="512" TYPE="xfs"
-#> /dev/mapper/lvm--vg01-lvm--vg01--root: UUID="05d7611d-e724-44d1-8ea7-bc64babadbcb" BLOCK_SIZE="512" TYPE="xfs"
-
 blkid /dev/lvm-vg01/*
+> /dev/lvm-vg01/lvm-vg01-log: UUID="868a5f83-95da-44e0-9a34-e385da9ffb33" BLOCK_SIZE="512" TYPE="xfs"
+> /dev/lvm-vg01/lvm-vg01-root: UUID="c261e59f-72c0-431a-a5cf-01f7eaf79497" BLOCK_SIZE="512" TYPE="xfs"
+
 ```
 
 ```
