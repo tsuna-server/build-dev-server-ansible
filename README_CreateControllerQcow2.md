@@ -280,10 +280,12 @@ EOF
 ```
 dpkg-reconfigure network-manager -f noninteractive
 apt-get install -y grub-efi
+update-initramfs -u
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=ubuntu --boot-directory=/boot/efi/EFI --recheck
 #grub-mkconfig -o /boot/efi/EFI/ubuntu/grub.cfg
-update-grub
-update-initramfs -u
+grub-mkconfig -o /boot/efi/EFI/grub/grub.cfg
+#update-grub
+#update-initramfs -u
 ```
 
 ```
