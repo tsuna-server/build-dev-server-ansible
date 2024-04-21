@@ -1,2 +1,0 @@
-- name: Reboot machine to refresh configurations
-  ansible.builtin.reboot:
