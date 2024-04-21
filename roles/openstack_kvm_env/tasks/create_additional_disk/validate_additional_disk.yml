@@ -1,7 +1,7 @@
 ---
 - name: "Declare a variable num_of_additional_disks"
   set_fact:
-    num_of_additional_disks: "{{ instance.additional_disks | length | int }}"
+    num_of_additional_disks: "{{ instance.resources.additional_disks | length | int }}"
 
 - name: "Validate additional disk for storage node like cinder. [instance.name={{ instance.name }}]"
   ansible.builtin.fail:
