@@ -79,12 +79,12 @@
 
 - name: Include create_additional_disk/main.yml
   include_tasks: create_additional_disk/main.yml
-  when: "'additional_disks' in instance"
+  when: "'resources' in instance and 'additional_disks' in instance.resources"
   loop_control:
     loop_var: disk
     extended: yes
     #index_var: disk_index
-  loop: '{{ instance.additional_disks }}'
+  loop: '{{ instance.resources.additional_disks }}'
 
 ## Create a new domain with `virt-install` command
 ## TODO: This is for creating domain XML file. It assumes run `virsh dumpxml <domain>`, edit it and save it as a new file after startup. Then we can use the XML file to define a domain.
