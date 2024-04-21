@@ -6,3 +6,4 @@
     #- vxlan
     - openstack_kvm_env
     - accept_forward_of_iptables
+    - reboot
