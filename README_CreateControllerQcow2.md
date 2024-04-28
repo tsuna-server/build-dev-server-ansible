@@ -82,7 +82,8 @@ if [ "${INSTANCE_TYPE}" = "comstorage" ]; then
     sgdisk -z cloud-ubuntu-image.raw
     sgdisk -n 1:0:+512M -t 1:ef00 -c 1:"EFI System" cloud-ubuntu-image.raw
     sgdisk -n 2:0:+512M -t 2:8300 -c 2:"Linux filesystem" cloud-ubuntu-image.raw
-    sgdisk -n 3:0:+8G -t 3:8300 -c 3:"Ceph filesystem" cloud-ubuntu-image.raw
+    ## LVM for ceph.
+    sgdisk -n 3:0:+8G -t 3:8300 -c 3:"Linux LVM" cloud-ubuntu-image.raw
     sgdisk -n 4:0:    -t 4:8e00 -c 4:"Linux LVM" cloud-ubuntu-image.raw
 else
     sgdisk -z cloud-ubuntu-image.raw
