@@ -114,7 +114,7 @@ mkfs.vfat -F32 ${L_DEV}p1
 mkfs.ext4 ${L_DEV}p2
 if [ "${INSTANCE_TYPE}" = "comstorage" ]; then
     pvcreate ${L_DEV}p3
-    vgcreate cinder-volumes ${L_DEV}p4
+    vgcreate cinder-volumes ${L_DEV}p3
     pvcreate ${L_DEV}p4
     vgcreate lvm-vg01 ${L_DEV}p4
     lvcreate -L 4G -n lvm-vg01-log lvm-vg01
