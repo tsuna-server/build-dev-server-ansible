@@ -39,11 +39,12 @@ lvm-root    (on lvm-01)   43GiB
 # Creating qcow2 of controller
 
 ```
-apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get -y install apt-cacher-ng
-cache_ng_ip="x.x.x.x"
+APT_HTTP_PROXY="x.x.x.x"
+#apt-get update
+#DEBIAN_FRONTEND=noninteractive apt-get -y install apt-cacher-ng
+#cache_ng_ip="${APT_HTTP_PROXY}"
 cat << EOF > /etc/apt/apt.conf.d/01proxy
-Acquire::HTTP::Proxy "http://${cache_ng_ip}:3142";
+Acquire::HTTP::Proxy "http://${APT_HTTP_PROXY}:3142";
 Acquire::HTTPS::Proxy "false";
 EOF
 
@@ -83,7 +84,8 @@ if [ "${INSTANCE_TYPE}" = "comstorage" ]; then
     sgdisk -n 1:0:+512M -t 1:ef00 -c 1:"EFI System" cloud-ubuntu-image.raw
     sgdisk -n 2:0:+512M -t 2:8300 -c 2:"Linux filesystem" cloud-ubuntu-image.raw
     ## LVM for ceph.
-    sgdisk -n 3:0:+8G -t 3:8300 -c 3:"Linux LVM" cloud-ubuntu-image.raw
+    #sgdisk -n 3:0:+8G -t 3:8e00 -c 3:"Linux LVM" cloud-ubuntu-image.raw
+    sgdisk -n 3:0:+8G -t 3:8300 -c 3:"Linux filesystem" cloud-ubuntu-image.raw
     sgdisk -n 4:0:    -t 4:8e00 -c 4:"Linux LVM" cloud-ubuntu-image.raw
 else
     sgdisk -z cloud-ubuntu-image.raw
@@ -113,8 +115,8 @@ ls -l ${L_DEV}*
 mkfs.vfat -F32 ${L_DEV}p1
 mkfs.ext4 ${L_DEV}p2
 if [ "${INSTANCE_TYPE}" = "comstorage" ]; then
-    pvcreate ${L_DEV}p3
-    vgcreate cinder-volumes ${L_DEV}p3
+    #pvcreate ${L_DEV}p3
+    #vgcreate cinder-volumes ${L_DEV}p3
     pvcreate ${L_DEV}p4
     vgcreate lvm-vg01 ${L_DEV}p4
     lvcreate -L 4G -n lvm-vg01-log lvm-vg01
@@ -146,6 +148,8 @@ sudo mount ${L_DEV}p1 chroot/boot/efi
 ```
 
 ```
+export http_proxy="http://${APT_HTTP_PROXY}:3142"
+export https_proxy="http://${APT_HTTP_PROXY}:3142"
 sudo debootstrap \
    --arch=amd64 \
    --variant=minbase \
@@ -154,6 +158,7 @@ sudo debootstrap \
    jammy \
    $HOME/cloud-image-ubuntu-from-scratch/chroot \
    http://jp.archive.ubuntu.com/ubuntu/
+unset http_proxy https_proxy
 ```
 
 ```
@@ -165,11 +170,11 @@ sudo mount --rbind /proc $HOME/cloud-image-ubuntu-from-scratch/chroot/proc
 
 ```
 sudo chroot $HOME/cloud-image-ubuntu-from-scratch/chroot /usr/bin/env \
-    UBUNTU_CODE=${UBUNTU_CODE} INSTANCE_TYPE=${INSTANCE_TYPE} L_DEV=${L_DEV} /bin/bash --login
+    UBUNTU_CODE=${UBUNTU_CODE} INSTANCE_TYPE=${INSTANCE_TYPE} L_DEV=${L_DEV} APT_HTTP_PROXY=${APT_HTTP_PROXY} /bin/bash --login
 ```
 
 ```
-echo "UBUNTU_CODE=${UBUNTU_CODE}, INSTANCE_TYPE=${INSTANCE_TYPE}, L_DEV=${L_DEV}"
+echo "UBUNTU_CODE=${UBUNTU_CODE}, INSTANCE_TYPE=${INSTANCE_TYPE}, L_DEV=${L_DEV}, APT_HTTP_PROXY=${APT_HTTP_PROXY}"
 ```
 
 ```
@@ -224,6 +229,11 @@ EOF
 ```
 
 ```
+cat << EOF > /etc/apt/apt.conf.d/01proxy
+Acquire::HTTP::Proxy "http://${APT_HTTP_PROXY}:3142";
+Acquire::HTTPS::Proxy "false";
+EOF
+
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y systemd-sysv
 dbus-uuidgen > /etc/machine-id
@@ -297,6 +307,7 @@ rm /sbin/initctl
 dpkg-divert --rename --remove /sbin/initctl
 apt-get clean
 rm -rf /tmp/* ~/.bash_history
+rm -f /etc/apt/apt.conf.d/01proxy
 export HISTSIZE=0
 exit
 ```
