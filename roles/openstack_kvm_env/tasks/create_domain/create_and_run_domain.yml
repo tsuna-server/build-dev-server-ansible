@@ -1,4 +1,24 @@
 ---
+# Declare a variable of configuration of the instance
+- name: Check whether instance.cloud_image_id is existed
+  ansible.builtin.fail:
+    msg: "Assertion failed. An instance {{ instance.name }}(group_vars.kvm.instances.{{ instance.name }}) does not have an element \"cloud_image_id\""
+  when: "'cloud_image_id' not in instance"
+
+- name: "Get an index of cloud_images (cloud_image_id={{ instance.cloud_image_id }})"
+  ansible.builtin.set_fact:
+    index_of_cloud_images: "{{ lookup('ansible.utils.index_of', group_vars.cloud_images, 'eq', instance.cloud_image_id, 'id') }}"
+
+- name: "Check whether the index_of_cloud_images was obtained (index_of_cloud_images={{ index_of_cloud_images }})"
+  ansible.builtin.fail:
+    msg: "A variable index_of_cloud_images was not defined or empty. The instruction previously might be failed."
+  when: index_of_cloud_images | length <= 0
+
+- name: "Get an element of the configuration of the instance"
+  ansible.builtin.set_fact:
+    element_of_instance: "{{ group_vars.cloud_images[index_of_cloud_images | int] }}"
+
+# Create an instance
 - name: Create UUID for new domain
   set_fact:
     domain_uuid: "{{ 1000 | random | to_uuid }}"
@@ -6,7 +26,7 @@
 - name: Declare resource directory
   set_fact:
     portion_resource_directory: "common"
-    version_number_of_ubuntu: "{{ group_vars.cloud_image.os_variant | regex_search(version_number_regex, '\\1') | first }}"
+    version_number_of_ubuntu: "{{ element_of_instance.os_variant | regex_search(version_number_regex, '\\1') | first }}"
   vars:
     version_number_regex: '^.*[Uu]buntu[^0-9]*([0-9]+\.[0-9]+)[^0-9]*$'
 
@@ -19,48 +39,52 @@
   ansible.builtin.debug:
     msg: "portion_resource_directory = {{ portion_resource_directory }}, version_number_of_ubuntu={{ version_number_of_ubuntu }}"
 
-
 - name: Create a directory for a new domain
   ansible.builtin.file:
-    path: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    path: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
     state: directory
     mode: '0755'
 
+- name: Declare variables to use templates for non autoinstall
+  set_fact:
+    tmpl_cloud_init: "cloud_init.cfg.j2"
+    tmpl_network_config: "network_config.cfg.j2"
+
 # Same cloud_init.cfg.j2 is used between all nodes
-- name: Create cloud_init.cfg
+- name: "Create cloud_init.cfg. A template \"common/{{ tmpl_cloud_init }}\" will be used."
   ansible.builtin.template:
-    src: "common/cloud_init.cfg.j2"
-    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/cloud_init.cfg"
+    src: "{{ portion_resource_directory }}/{{ tmpl_cloud_init }}"
+    dest: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/cloud_init.cfg"
     owner: root
     group: root
     mode: '644'
     backup: no
 
-- name: Create network config
+- name: "Create a network config. A template \"common/{{ tmpl_network_config }}\" will be used."
   ansible.builtin.template:
-    src: "{{ portion_resource_directory }}/network_config.cfg.j2"
-    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/network_config.cfg"
+    src: "{{ portion_resource_directory }}/{{ tmpl_network_config }}"
+    dest: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/network_config.cfg"
 
 - name: Create seed image to insert cloud and network configs
   ansible.builtin.command:
     argv: ["cloud-localds", "-v", "--network-config", "network_config.cfg", "{{ instance.name }}-seed.img", "cloud_init.cfg"]
   args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
 - name: Create an external snapshot from base image
   ansible.builtin.command:
     argv: ["qemu-img", "create", "-F", "qcow2", "-b", "../{{ base_image_name }}", "-f", "qcow2", "{{ instance.name }}.img"]
   args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
 - name: Include create_additional_disk/main.yml
   include_tasks: create_additional_disk/main.yml
-  when: "'additional_disks' in instance"
+  when: "'resources' in instance and 'additional_disks' in instance.resources"
   loop_control:
     loop_var: disk
     extended: yes
     #index_var: disk_index
-  loop: '{{ instance.additional_disks }}'
+  loop: '{{ instance.resources.additional_disks }}'
 
 ## Create a new domain with `virt-install` command
 ## TODO: This is for creating domain XML file. It assumes run `virsh dumpxml <domain>`, edit it and save it as a new file after startup. Then we can use the XML file to define a domain.
@@ -76,13 +100,13 @@
 #               "--disk", "path={{ instance.name }}.img,device=disk",
 #               "--graphics", "vnc",
 #               "--os-type", "Linux",
-#               "--os-variant", "{{ group_vars.cloud_image.os_variant }}",
+#               "--os-variant", "{{ element_of_instance.os_variant }}",
 #               "--network", "bridge:{{ instance.name_of_host_bridge }}",
 #               "--console", "pty,target_type=serial",
 #               "--noautoconsole"
 #           ]
 #  args:
-#    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+#    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
 
 # Define a domain follow each conditionals #############################################
@@ -91,14 +115,14 @@
 # You can expand disk size only in this instruction
 - name: Expand a primary disk size
   ansible.builtin.command:
-    argv: ["qemu-img", "resize", "{{ instance.name }}.img", "+{{ instance.disk.size }}"]
+    argv: ["qemu-img", "resize", "{{ instance.name }}.img", "+{{ instance.resources.disk.size }}"]
   args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 
 - name: Create domain.xml for debug
   ansible.builtin.template:
     src: "{{ portion_resource_directory }}/domain_template.xml.j2"
-    dest: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
+    dest: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}/domain_template.xml"
 
 - name: "Define a new domain from an XML (instance={{ instance.name }})"
   community.libvirt.virt:

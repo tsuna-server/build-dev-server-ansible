@@ -2,9 +2,9 @@
 - name: "Include validate_additional_disk.yml"
   include_tasks: validate_additional_disk.yml
 
-- name: "Create an additional disk (instance_name={{ instance.name }}, disk_file_path={{ group_vars.cloud_image.local_saved_dir }}/disk{{ ansible_loop.index }}.img, size={{ disk.size }})"
+- name: "Create an additional disk (instance_name={{ instance.name }}, disk_file_path={{ group_vars.kvm.local_saved_dir }}/disk{{ ansible_loop.index }}.img, size={{ disk.size }})"
   ansible.builtin.command:
     argv: ["qemu-img", "create", "-f", "qcow2", "./disk{{ ansible_loop.index }}.img", "{{ disk.size }}"]
   args:
-    chdir: "{{ group_vars.cloud_image.local_saved_dir }}/{{ instance.name }}"
+    chdir: "{{ group_vars.kvm.local_saved_dir }}/{{ instance.name }}"
 

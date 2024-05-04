@@ -16,3 +16,4 @@ pip-selfcheck.json
 /private-key
 /venv
 
+__pycache__

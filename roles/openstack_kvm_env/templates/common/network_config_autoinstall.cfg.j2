@@ -1,0 +1,3 @@
+{% if 'autoinstall' in instance and 'network' in instance["autoinstall"] %}
+{{ instance["autoinstall"]["network"] | pretty_yaml(indent=0) }}
+{% endif %}
