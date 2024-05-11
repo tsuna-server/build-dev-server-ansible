@@ -3,10 +3,10 @@
   set_fact:
     num_of_additional_disks: "{{ instance.resources.additional_disks | length | int }}"
 
-- name: "Validate additional disk for storage node like cinder. [instance.name={{ instance.name }}]"
-  ansible.builtin.fail:
-    msg: "This script only support 1 additional disks for node of cinder. Num of disks you specified is {{ num_of_additional_disks }}"
-  when: "(instance.name | regex_search(\"^.*(cinder)[0-9]+.*$\")) and (num_of_additional_disks != \"1\")"
+#- name: "Validate additional disk for storage node like cinder. [instance.name={{ instance.name }}]"
+#  ansible.builtin.fail:
+#    msg: "This script only support 1 additional disks for node of cinder. Num of disks you specified is {{ num_of_additional_disks }}"
+#  when: "(instance.name | regex_search(\"^.*(cinder)[0-9]+.*$\")) and (num_of_additional_disks != \"1\")"
 
 - name: "Validate additional disk for other than storage node. [instance.name={{ instance.name }}]"
   ansible.builtin.fail:
