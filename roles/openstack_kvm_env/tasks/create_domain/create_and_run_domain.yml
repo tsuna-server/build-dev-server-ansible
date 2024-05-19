@@ -21,7 +21,7 @@
 # Create an instance
 - name: Create UUID for new domain
   set_fact:
-    domain_uuid: "{{ 1000 | random | to_uuid }}"
+    domain_uuid: "{{ instance.name | random | to_uuid }}"
 
 - name: Declare resource directory
   set_fact:
