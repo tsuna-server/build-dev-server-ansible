@@ -1,6 +1,7 @@
 # Build development server
 
 # Usage
+## Usage on your machine
 
 ```
 $ . ./venv/bin/activate
@@ -12,7 +13,6 @@ Install `ansible-galaxy` requirements.
 ```
 (venv) $ ansible-galaxy install -r requirements.yml
 ```
-
 
 `ansible-playbook` can run with checking mode by adding `--check` option like below.
 
@@ -52,12 +52,14 @@ You should add a route to connect to the instances on management segment like be
 ```
 # # format)
 # ip route add <management IP segment> via <gateway to management IP segment>
-# # e.g.)
+# # e.g.) In this example configuration
 # ip route add 192.168.2.0/24 via 192.168.1.254
 ```
-You can find the IP `<gateway to management IP segment>` as `group_vars.vxlan.provider.ip` in `group_vars/all`.  
-`<management IP segment>` is determined by the IP addresses of each instances in management IP segment and some of other parameters.
-For example, if each `group_vars.kvm.instances.<instance name>.network.management.ip` are belonging in a IP segment `192.168.2.0/24`, `<management IP segment>` is determined as `192.168.2.0/24`.
+
+* `<gateway to management IP segment>` as `group_vars.vxlan.provider.ip` in `group_vars/all`.  
+
+* `<management IP segment>` is the IP addresses of each instances in management IP segment.
+ For example, if each `group_vars.kvm.instances.<instance name>.network.management.ip` are in a segment `192.168.2.0/24`, then `<management IP segment>` is `192.168.2.0/24`.
 
 # Diagram
 A diagram of the structure that this Ansible will build is like below.  
