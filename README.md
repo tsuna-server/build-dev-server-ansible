@@ -37,9 +37,10 @@ $ cd build-dev-server-ansible
 $ cp /path/to/private-key ./private-key
 $ docker run --rm \
     --volume ${PWD}:/opt/ansible \
-    --volume /path/to/private-key:/private-key \
-    --add-host target-host:x.x.x.x \
-    tsutomu/ansible-runner
+    --volume /path/to/private-key:/private-key \   # Specify your private key to connect to target-host
+    --env ANSIBLE_HOST_KEY_CHECKING=False \        # If you want to skip host key checking
+    --add-host target-host:x.x.x.x \               # Specify the host name and ip which you want to build the environment to
+    tsutomu/tsuna-ansible-runner
 
 * `--volume /path/to/private-key:/private-key` is the option to specify the private key that can log in to the node that you want to build the environment to.
 * `--add-host target-host:x.x.x.x` is the option to specify the host name and ip which you want to build the environment to.
