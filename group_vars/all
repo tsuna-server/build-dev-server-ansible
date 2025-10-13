@@ -95,18 +95,15 @@ group_vars:
         autoinstalls:
           ssh:
             <<: *a9s_ssh_in_commons
-
-        network:
-          ethernets:
-            <<: *a9s_ssh_in_commons
+          network:
+            ethernets:
+              enp1s0:
+                <<: *a92_net_enp1s0_in_controllers
+                addresses: ["172.31.130.1/16"]    # addresses on enp1s0 should be declared on each hosts
         template:
           # group_vars.kvm.instances.<instance_name>.template.network will be applied to the domain.xml of the kvm.
           network:
             interfaces:
-              enp1s0:
-              <<: *a92_net_enp1s0_in_controllers
-              addresses: ["172.31.130.1/16"]    # addresses on enp1s0 should be declared on each hosts
-
               # enp1s0 connected to br0 on host machine. It will be used for the interface on provider network.
               - type: bridge
                 source: br0
